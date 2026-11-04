@@ -3,7 +3,8 @@
  *
  * Règle : chaque photo n'apparaît qu'à UN seul endroit du site, sans photos qui se ressemblent.
  * - source "client" : photos fournies par la boulangerie (les produits vendus) :
- *   catalogue, inspirations du formulaire, « Nous trouver » et fraisier de l'accueil.
+ *   catalogue, inspirations du formulaire, « Nous trouver », vitrine de « Notre maison »
+ *   et fraisier de l'accueil.
  * - source "stock" : photos libres de droit (licence Unsplash). Leurs crédits
  *   s'affichent dans les mentions légales. Celles qui montrent un produit portent
  *   la mention « Photo d'illustration ».
@@ -21,6 +22,7 @@ import baguettesAlignees from "@/public/images/pains/baguettes-alignees.webp";
 import baguettesCroisees from "@/public/images/pains/baguettes-croisees.webp";
 import fraisier from "@/public/images/gateaux/fraisier-fruits.webp";
 import fraisierDetail from "@/public/images/gateaux/fraisier-detail.webp";
+import assortimentDetail from "@/public/images/gateaux/assortiment-detail.webp";
 import numberCake from "@/public/images/gateaux/number-cake.webp";
 import painsChocolat from "@/public/images/viennoiseries/pains-au-chocolat.webp";
 import cookies from "@/public/images/gourmandises/cookies-garnis.webp";
@@ -37,7 +39,6 @@ import tarteletteFramboises from "@/public/images/ambiance/tartelette-framboises
 import sandwichBaguette from "@/public/images/ambiance/sandwich-baguette.webp";
 import champDeBleCouchant from "@/public/images/ambiance/champ-de-ble-couchant.webp";
 import gateauFleursBlanches from "@/public/images/ambiance/gateau-fleurs-blanches.webp";
-import bolDeFarine from "@/public/images/ambiance/bol-de-farine.webp";
 import petrissageMains from "@/public/images/ambiance/petrissage-mains.webp";
 import painsDeSeigle from "@/public/images/ambiance/pains-de-seigle.webp";
 import pateFarineFondNoir from "@/public/images/ambiance/pate-farine-fond-noir.webp";
@@ -125,10 +126,9 @@ export const images = {
     numberCake,
     "Number cake « 30 » garni de crème, de roses, de macarons, de framboises et de cœurs roses",
   ),
-  vitrinePatisseries: client(
-    vitrinePatisseries,
-    "Assortiment de pâtisseries individuelles en vitrine : macarons, tartelettes citron meringuées, éclairs et entremets",
-    "45% 60%",
+  assortimentDetail: client(
+    assortimentDetail,
+    "Assortiment de pâtisseries individuelles en vitrine : éclairs, tartelettes aux framboises, paris-brest et choux",
   ),
 
   // Accueil
@@ -185,12 +185,10 @@ export const images = {
   ),
 
   // Notre maison
-  bolDeFarine: stock(
-    bolDeFarine,
-    "Bol noir rempli de farine, entouré d'épis de blé, sur fond noir",
-    "Roman Matveev",
-    "quVArOn8-30",
-    "50% 58%",
+  vitrinePatisseries: client(
+    vitrinePatisseries,
+    "Vitrine de la boutique : macarons, tartelettes citron meringuées, éclairs, flans et entremets",
+    "45% 60%",
   ),
   petrissageMains: stock(
     petrissageMains,

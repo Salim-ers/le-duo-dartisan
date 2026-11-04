@@ -1,4 +1,3 @@
-import { FlourDust } from "@/components/animations/FlourDust";
 import { RevealImage, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { MaisonChapters } from "@/components/maison/MaisonChapters";
@@ -16,23 +15,24 @@ export const metadata = pageMetadata({
 export default function MaisonPage() {
   return (
     <>
-      <header className="on-dark relative flex h-[calc(100svh-var(--header-h))] min-h-[520px] flex-col justify-end overflow-hidden bg-[#050505] text-ivory">
-        <RevealImage kind="circle" parallax={4} className="absolute inset-0 bg-[#050505]">
-          <Photo name="bolDeFarine" sizes="100vw" parallax preload />
-        </RevealImage>
-        <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(5_5_5/0.1)_40%,rgb(5_5_5/0.88)_100%)]" />
-        <FlourDust />
-        <div className="container-x relative grid gap-6 pb-12 lg:grid-cols-12 lg:items-end lg:pb-16">
+      <header className="pb-16 lg:pb-24">
+        <div className="container-x grid gap-8 pb-10 pt-10 lg:grid-cols-12 lg:items-end lg:pb-14 lg:pt-16">
           <div className="lg:col-span-8">
-            <Breadcrumbs tone="light" items={[{ name: "Notre maison", path: "/notre-maison" }]} />
-            <SplitReveal as="h1" onStage className="t-mega mt-6">
+            <Breadcrumbs items={[{ name: "Notre maison", path: "/notre-maison" }]} />
+            <SplitReveal as="h1" onStage className="t-mega mt-6 text-blue-deep">
               Notre maison
             </SplitReveal>
           </div>
-          <p className="t-lead text-ivory/85 lg:col-span-4">
+          <p className="t-lead text-ink/80 lg:col-span-4 lg:pb-3">
             Une boulangerie-pâtisserie de quartier où l’on vient pour le pain du jour, et où l’on revient pour les
             gâteaux des grands jours.
           </p>
+        </div>
+        {/* Largeur limitée au conteneur : la photo reste nette, même sur un très grand écran. */}
+        <div className="container-x">
+          <RevealImage kind="circle" parallax={4} className="moulure aspect-[4/3] bg-paper sm:aspect-[16/9]">
+            <Photo name="vitrinePatisseries" sizes="(min-width: 1760px) 1664px, 94vw" parallax preload />
+          </RevealImage>
         </div>
       </header>
 

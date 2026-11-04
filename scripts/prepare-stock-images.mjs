@@ -18,7 +18,6 @@ const photos = {
   "sandwich-baguette": "eQqY_KQOqEE",
   "champ-de-ble-couchant": "y6dUxc66kAs",
   "gateau-fleurs-blanches": "HBETvpRcRgA",
-  "bol-de-farine": "quVArOn8-30",
   "petrissage-mains": "5CRzqqWzEKQ",
   "pains-de-seigle": "QnQSxrXFgnw",
   "pate-farine-fond-noir": "m9qWesqRN0M",

@@ -12,17 +12,6 @@ import { ProductModal } from "./ProductModal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-/** Rythme éditorial : grand / moyen, puis trois carrés — jamais une grille uniforme. */
-const LAYOUT = [
-  { span: "md:col-span-7", aspect: "aspect-[4/3]", sizes: "(min-width: 768px) 56vw, 100vw" },
-  { span: "md:col-span-5", aspect: "aspect-[4/5]", sizes: "(min-width: 768px) 40vw, 100vw" },
-  { span: "md:col-span-4", aspect: "aspect-square", sizes: "(min-width: 768px) 32vw, 100vw" },
-  { span: "md:col-span-4", aspect: "aspect-[4/5]", sizes: "(min-width: 768px) 32vw, 100vw" },
-  { span: "md:col-span-4", aspect: "aspect-square", sizes: "(min-width: 768px) 32vw, 100vw" },
-];
-
-const REVEAL_KINDS = ["up", "left", "circle", "right", "down"] as const;
-
 function CatalogueFromUrl() {
   const raw = useSearchParams().get("categorie");
   return <CatalogueView active={isCategory(raw) ? raw : "tout"} />;
@@ -108,55 +97,49 @@ function CatalogueView({ active }: { active: CategoryId | "tout" }) {
         <p className="sr-only">
           {list.length} création{list.length > 1 ? "s" : ""} affichée{list.length > 1 ? "s" : ""}
         </p>
-        <motion.ul layout="position" className="grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12 md:gap-x-8 md:gap-y-20">
+        <motion.ul layout="position" className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-16">
           <AnimatePresence mode="popLayout" initial={false}>
-            {list.map((p, i) => {
-              const l = LAYOUT[i % LAYOUT.length];
-              const offset = i % 5 === 1 ? "md:mt-24" : i % 5 === 3 ? "md:mt-12" : "";
-              return (
-                <motion.li
-                  key={p.id}
-                  layout="position"
-                  className={cn(l.span, offset)}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0, transition: { duration: 0.8, ease, delay: Math.min(i, 6) * 0.07 } }}
-                  exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.3 } }}
+            {list.map((p, i) => (
+              <motion.li
+                key={p.id}
+                layout="position"
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: 0.8, ease, delay: Math.min(i, 6) * 0.07 } }}
+                exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.3 } }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSelected(p)}
+                  className="group block w-full text-left"
+                  aria-haspopup="dialog"
                 >
-                  <button
-                    type="button"
-                    onClick={() => setSelected(p)}
-                    className="group block w-full text-left"
-                    aria-haspopup="dialog"
-                  >
-                    <RevealImage kind={REVEAL_KINDS[i % REVEAL_KINDS.length]} className={cn("bg-paper", l.aspect)}>
-                      <Photo
-                        name={p.image}
-                        sizes={l.sizes}
-                        imgClassName="transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]"
-                      />
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-3 border border-ivory/0 transition-colors duration-700 group-hover:border-ivory/70"
-                      />
-                      {p.customizable && (
-                        <span className="absolute left-4 top-4 rounded-full bg-ivory/92 px-3 py-1 text-xs font-semibold text-blue-deep">
-                          Personnalisable
-                        </span>
-                      )}
-                    </RevealImage>
-                    <div className="mt-5 flex items-baseline justify-between gap-6">
-                      <h2 className="t-h3 text-blue-deep transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:translate-x-1">
-                        {p.name}
-                      </h2>
-                      <span className="t-caption shrink-0 text-mute">
-                        {categories.find((c) => c.id === p.category)?.short}
+                  {/* Même format partout ; l'apparition part en vague, colonne après colonne. */}
+                  <RevealImage delay={(i % 3) * 0.12} className="aspect-square bg-paper">
+                    <Photo
+                      name={p.image}
+                      sizes="(min-width: 1024px) 32vw, (min-width: 640px) 48vw, 100vw"
+                      imgClassName="transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-3 border border-ivory/0 transition-colors duration-700 group-hover:border-ivory/70"
+                    />
+                    {p.customizable && (
+                      <span className="absolute left-4 top-4 rounded-full bg-ivory/92 px-3 py-1 text-xs font-semibold text-blue-deep">
+                        Personnalisable
                       </span>
-                    </div>
-                    <p className="mt-2 max-w-[46ch] text-[0.95rem] leading-relaxed text-ink/70">{p.description}</p>
-                  </button>
-                </motion.li>
-              );
-            })}
+                    )}
+                  </RevealImage>
+                  <span className="t-caption mt-5 block text-mute">
+                    {categories.find((c) => c.id === p.category)?.short}
+                  </span>
+                  <h2 className="t-h3 mt-1 text-blue-deep transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:translate-x-1">
+                    {p.name}
+                  </h2>
+                  <p className="mt-2 max-w-[46ch] text-[0.95rem] leading-relaxed text-ink/70">{p.description}</p>
+                </button>
+              </motion.li>
+            ))}
           </AnimatePresence>
         </motion.ul>
 
