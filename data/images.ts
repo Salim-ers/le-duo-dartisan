@@ -2,8 +2,8 @@
  * Registre des photographies du site.
  *
  * Règle : chaque photo n'apparaît qu'à UN seul endroit du site, sans photos qui se ressemblent.
- * - source "client" : photos fournies par la boulangerie (les produits vendus).
- *   Réservées au catalogue, aux inspirations du formulaire et à « Nous trouver ».
+ * - source "client" : photos fournies par la boulangerie (les produits vendus) :
+ *   catalogue, inspirations du formulaire, « Nous trouver » et fraisier de l'accueil.
  * - source "stock" : photos libres de droit (licence Unsplash). Leurs crédits
  *   s'affichent dans les mentions légales. Celles qui montrent un produit portent
  *   la mention « Photo d'illustration ».
@@ -20,6 +20,7 @@ import facade from "@/public/images/maison/facade.webp";
 import baguettesAlignees from "@/public/images/pains/baguettes-alignees.webp";
 import baguettesCroisees from "@/public/images/pains/baguettes-croisees.webp";
 import fraisier from "@/public/images/gateaux/fraisier-fruits.webp";
+import fraisierDetail from "@/public/images/gateaux/fraisier-detail.webp";
 import numberCake from "@/public/images/gateaux/number-cake.webp";
 import painsChocolat from "@/public/images/viennoiseries/pains-au-chocolat.webp";
 import cookies from "@/public/images/gourmandises/cookies-garnis.webp";
@@ -35,7 +36,6 @@ import croissantsFondNoir from "@/public/images/ambiance/croissants-fond-noir.we
 import tarteletteFramboises from "@/public/images/ambiance/tartelette-framboises.webp";
 import sandwichBaguette from "@/public/images/ambiance/sandwich-baguette.webp";
 import champDeBleCouchant from "@/public/images/ambiance/champ-de-ble-couchant.webp";
-import gateauFruitsRouges from "@/public/images/ambiance/gateau-fruits-rouges.webp";
 import gateauFleursBlanches from "@/public/images/ambiance/gateau-fleurs-blanches.webp";
 import bolDeFarine from "@/public/images/ambiance/bol-de-farine.webp";
 import petrissageMains from "@/public/images/ambiance/petrissage-mains.webp";
@@ -117,9 +117,9 @@ export const images = {
   ),
 
   // Gâteaux sur mesure : inspirations du formulaire
-  fraisier: client(
-    fraisier,
-    "Grand fraisier rectangulaire bordé de fraises, garni de fruits frais et de feuilles en chocolat",
+  fraisierDetail: client(
+    fraisierDetail,
+    "Gros plan sur un fraisier garni de fraises, de kiwis, de mûres et de feuilles en chocolat",
   ),
   numberCake: client(
     numberCake,
@@ -132,6 +132,10 @@ export const images = {
   ),
 
   // Accueil
+  fraisier: client(
+    fraisier,
+    "Grand fraisier rectangulaire bordé de fraises, garni de fruits frais et de feuilles en chocolat",
+  ),
   farineSurPain: stock(
     farineSurPain,
     "Mains saupoudrant un nuage de farine au-dessus d'un pain rustique, sur fond noir",
@@ -169,12 +173,6 @@ export const images = {
     "heino eisner",
     "y6dUxc66kAs",
     "50% 62%",
-  ),
-  gateauFruitsRouges: stock(
-    gateauFruitsRouges,
-    "Gâteau blanc à étages couronné de fruits rouges poudrés de sucre glace",
-    "Alexandra Gornago",
-    "_B7shfNUXEA",
   ),
 
   // Gâteaux sur mesure : en-tête

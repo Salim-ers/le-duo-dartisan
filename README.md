@@ -111,7 +111,7 @@ Trois règles évitent les bugs (plantage au rechargement, molette bloquée dans
 
 ```
 app/                 pages, métadonnées, sitemap, robots, icônes
-components/animations  intro, transitions, défilement, révélations, curseur, farine
+components/animations  intro, transitions, défilement, révélations, farine
 components/layout      en-tête, pied de page, barre mobile, fil d’Ariane
 components/home        sections de l’accueil
 components/products    catalogue et fiche produit

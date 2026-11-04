@@ -34,7 +34,7 @@ export const inspirations: {
     id: "grand-fraisier",
     label: "Gâteau aux fruits",
     description: "Fraisier rectangulaire couronné de fruits frais",
-    image: "fraisier",
+    image: "fraisierDetail",
     defaultType: "Fraisier aux fruits",
   },
   {

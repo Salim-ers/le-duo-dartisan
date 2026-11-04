@@ -84,10 +84,10 @@ export function EventSection() {
 
         <div className="container-x relative grid h-full items-center gap-12 py-20 lg:grid-cols-12 lg:gap-8 lg:py-0">
           <figure className="relative [perspective:1400px] lg:col-span-5 lg:col-start-1">
-            <div data-cake className="relative mx-auto w-full max-w-[min(100%,62svh)] [transform-style:preserve-3d]">
+            <div data-cake className="relative mx-auto w-full max-w-[min(100%,74svh)] [transform-style:preserve-3d]">
               <div data-shadow aria-hidden="true" className="absolute -bottom-10 left-[8%] right-[8%] h-16 rounded-[50%] bg-blue-night/80 blur-2xl" />
-              <div data-tilt className="moulure relative aspect-[4/5] overflow-hidden bg-blue-night shadow-[0_50px_90px_-40px_rgb(0_0_0/0.65)] [transform-style:preserve-3d]">
-                <Photo name="gateauFruitsRouges" sizes="(min-width: 1024px) 42vw, 92vw" />
+              <div data-tilt className="moulure relative aspect-square overflow-hidden bg-blue-night shadow-[0_50px_90px_-40px_rgb(0_0_0/0.65)] [transform-style:preserve-3d]">
+                <Photo name="fraisier" sizes="(min-width: 1024px) 42vw, 92vw" />
                 <div
                   data-light
                   aria-hidden="true"
@@ -115,9 +115,6 @@ export function EventSection() {
                 Imaginer mon gâteau
               </ButtonLink>
             </div>
-            <p data-text className="t-small mt-4 text-ivory/55">
-              Photo d’illustration
-            </p>
           </div>
         </div>
       </div>

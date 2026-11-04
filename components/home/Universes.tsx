@@ -77,7 +77,6 @@ export function Universes() {
               key={u.n}
               href={u.href}
               data-panel
-              data-cursor="Voir"
               className="group relative block h-[62svh] w-[78vw] max-w-md shrink-0 snap-center lg:h-[76svh] lg:w-[44vw] lg:max-w-none"
             >
               <RevealImage kind={u.kind} className="absolute inset-0 bg-blue-night">

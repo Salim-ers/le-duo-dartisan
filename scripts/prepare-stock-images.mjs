@@ -17,7 +17,6 @@ const photos = {
   "tartelette-framboises": "83sgp9jxW8k",
   "sandwich-baguette": "eQqY_KQOqEE",
   "champ-de-ble-couchant": "y6dUxc66kAs",
-  "gateau-fruits-rouges": "_B7shfNUXEA",
   "gateau-fleurs-blanches": "HBETvpRcRgA",
   "bol-de-farine": "quVArOn8-30",
   "petrissage-mains": "5CRzqqWzEKQ",

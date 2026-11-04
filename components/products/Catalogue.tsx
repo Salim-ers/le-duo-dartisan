@@ -125,7 +125,6 @@ function CatalogueView({ active }: { active: CategoryId | "tout" }) {
                   <button
                     type="button"
                     onClick={() => setSelected(p)}
-                    data-cursor="Voir"
                     className="group block w-full text-left"
                     aria-haspopup="dialog"
                   >

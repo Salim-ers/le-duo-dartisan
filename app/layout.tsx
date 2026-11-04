@@ -5,7 +5,6 @@ import "@fontsource-variable/manrope/wght.css";
 import "@fontsource/damion/400.css";
 import "@/styles/globals.css";
 
-import { Cursor } from "@/components/animations/Cursor";
 import { IntroLoader, introGuardScript } from "@/components/animations/IntroLoader";
 import { TransitionProvider } from "@/components/animations/PageTransition";
 import { ScrollProgress } from "@/components/animations/ScrollProgress";
@@ -66,7 +65,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Footer />
           <MobileActionBar />
         </TransitionProvider>
-        <Cursor />
       </body>
     </html>
   );
