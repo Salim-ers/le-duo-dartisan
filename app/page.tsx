@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { BreadSection } from "@/components/home/BreadSection";
 import { CraftSection } from "@/components/home/CraftSection";
 import { EventSection } from "@/components/home/EventSection";
-import { FeaturedCake } from "@/components/home/FeaturedCake";
 import { HomeHero } from "@/components/home/HomeHero";
-import { ShowcaseGallery } from "@/components/home/ShowcaseGallery";
 import { Universes } from "@/components/home/Universes";
 import { VisitSection } from "@/components/home/VisitSection";
 import { siteConfig } from "@/lib/site.config";
@@ -20,11 +17,8 @@ export default function HomePage() {
   return (
     <>
       <HomeHero />
-      <BreadSection />
       <Universes />
-      <FeaturedCake />
       <CraftSection />
-      <ShowcaseGallery />
       <EventSection />
       <VisitSection />
     </>

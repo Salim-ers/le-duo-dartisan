@@ -1,6 +1,8 @@
 /**
  * Registre des photographies du site.
- * Toutes les images sont fournies par la boulangerie (source : "client").
+ * - source "client" : photos fournies par la boulangerie (les produits vendus).
+ * - source "stock" : photos d'ambiance libres de droit (CC0), jamais présentées
+ *   comme des produits de la boutique. Leurs crédits s'affichent dans les mentions légales.
  * Pour remplacer une photo : déposer le nouveau fichier dans public/images/
  * au même chemin, ou modifier l'import ci-dessous.
  *
@@ -33,6 +35,10 @@ import dEntremetsCitron from "@/public/images/details/entremets-citron.webp";
 import dFlanCoco from "@/public/images/details/flan-coco.webp";
 import dEclairsPistache from "@/public/images/details/eclairs-pistache.webp";
 import dTartelettesFruitsRouges from "@/public/images/details/tartelettes-fruits-rouges.webp";
+import champDeBle from "@/public/images/ambiance/champ-de-ble.webp";
+import episDeBle from "@/public/images/ambiance/epis-de-ble.webp";
+import patonsFarine from "@/public/images/ambiance/patons-farine.webp";
+import croissants from "@/public/images/ambiance/croissants.webp";
 
 export type SiteImage = {
   src: StaticImageData;
@@ -40,7 +46,8 @@ export type SiteImage = {
   /** Point focal pour object-position (recadrages mobile / desktop). */
   focus?: string;
   source: "client" | "stock";
-  credit?: string;
+  /** Auteur et page d'origine, pour les photos libres de droit. */
+  credit?: { author: string; url: string };
 };
 
 const client = (src: StaticImageData, alt: string, focus?: string): SiteImage => ({
@@ -48,6 +55,14 @@ const client = (src: StaticImageData, alt: string, focus?: string): SiteImage =>
   alt,
   focus,
   source: "client",
+});
+
+const stock = (src: StaticImageData, alt: string, author: string, url: string, focus?: string): SiteImage => ({
+  src,
+  alt,
+  focus,
+  source: "stock",
+  credit: { author, url },
 });
 
 export const images = {
@@ -137,6 +152,32 @@ export const images = {
   detailTartelettesFruitsRouges: client(
     dTartelettesFruitsRouges,
     "Tartelettes aux fraises et framboises, crème fouettée",
+  ),
+  // Photographies d'ambiance libres de droit (CC0, WordPress Photo Directory)
+  champDeBle: stock(
+    champDeBle,
+    "Champ de blé doré ondulant sous un grand soleil",
+    "Chuck Grimmett",
+    "https://wordpress.org/photos/photo/27461ffbf8/",
+    "50% 70%",
+  ),
+  episDeBle: stock(
+    episDeBle,
+    "Épis de blé mûrs en gros plan sur fond de ciel bleu",
+    "Jennifer Bourn",
+    "https://wordpress.org/photos/photo/343637b078/",
+  ),
+  patonsFarine: stock(
+    patonsFarine,
+    "Pâtons ronds alignés sur un plan de travail fariné, à côté d'un rouleau à pâtisserie",
+    "Tawhid Sadman",
+    "https://wordpress.org/photos/photo/99169d2662/",
+  ),
+  croissants: stock(
+    croissants,
+    "Croissants et viennoiseries dorés au feuilletage bien marqué",
+    "Reyes Martínez",
+    "https://wordpress.org/photos/photo/210622cf27/",
   ),
 } satisfies Record<string, SiteImage>;
 

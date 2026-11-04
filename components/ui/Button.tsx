@@ -1,9 +1,6 @@
-"use client";
-
+import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
-import { gsap } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
-import { TransitionLink } from "@/components/animations/PageTransition";
 
 type Variant = "primary" | "light" | "outline" | "outline-light";
 
@@ -31,7 +28,7 @@ const hoverText: Record<Variant, string> = {
   "outline-light": "group-hover/btn:text-blue-deep",
 };
 
-/** Contenu : texte qui glisse et remplissage qui monte depuis le bas. */
+/** Contenu : remplissage qui monte depuis le bas au survol. */
 function Inner({ children, variant }: { children: ReactNode; variant: Variant }) {
   return (
     <>
@@ -49,26 +46,7 @@ function Inner({ children, variant }: { children: ReactNode; variant: Variant })
   );
 }
 
-/** Attraction magnétique douce vers le pointeur (desktop). */
-const magnetic = {
-  onPointerMove(e: React.PointerEvent<HTMLElement>) {
-    if (e.pointerType !== "mouse") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const el = e.currentTarget;
-    const r = el.getBoundingClientRect();
-    gsap.to(el, {
-      x: (e.clientX - r.left - r.width / 2) * 0.18,
-      y: (e.clientY - r.top - r.height / 2) * 0.3,
-      duration: 0.5,
-      ease: "power3.out",
-    });
-  },
-  onPointerLeave(e: React.PointerEvent<HTMLElement>) {
-    gsap.to(e.currentTarget, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.5)" });
-  },
-};
-
-type LinkBtnProps = Omit<ComponentProps<typeof TransitionLink>, "className"> & {
+type LinkBtnProps = Omit<ComponentProps<typeof Link>, "className"> & {
   variant?: Variant;
   className?: string;
   external?: boolean;
@@ -78,25 +56,15 @@ export function ButtonLink({ variant = "primary", className, children, external,
   const cls = cn(base, variants[variant], className);
   if (external) {
     return (
-      <a
-        {...magnetic}
-        href={href.toString()}
-        className={cls}
-        {...(props as ComponentProps<"a">)}
-      >
+      <a href={href.toString()} className={cls} {...(props as ComponentProps<"a">)}>
         <Inner variant={variant}>{children}</Inner>
       </a>
     );
   }
   return (
-    <TransitionLink
-      {...magnetic}
-      href={href}
-      className={cls}
-      {...props}
-    >
+    <Link href={href} className={cls} {...props}>
       <Inner variant={variant}>{children}</Inner>
-    </TransitionLink>
+    </Link>
   );
 }
 
@@ -104,11 +72,7 @@ type BtnProps = ComponentProps<"button"> & { variant?: Variant };
 
 export function Button({ variant = "primary", className, children, ...props }: BtnProps) {
   return (
-    <button
-      {...magnetic}
-      className={cn(base, variants[variant], className)}
-      {...props}
-    >
+    <button className={cn(base, variants[variant], className)} {...props}>
       <Inner variant={variant}>{children}</Inner>
     </button>
   );

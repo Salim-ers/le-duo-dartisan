@@ -5,11 +5,6 @@ import "@fontsource-variable/manrope/wght.css";
 import "@fontsource/damion/400.css";
 import "@/styles/globals.css";
 
-import { Cursor } from "@/components/animations/Cursor";
-import { IntroLoader, introGuardScript } from "@/components/animations/IntroLoader";
-import { TransitionProvider } from "@/components/animations/PageTransition";
-import { ScrollProgress } from "@/components/animations/ScrollProgress";
-import { SmoothScroll } from "@/components/animations/SmoothScroll";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { JsonLd } from "@/components/layout/JsonLd";
@@ -44,9 +39,6 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: introGuardScript }} />
-      </head>
       <body>
         <a
           href="#main"
@@ -55,18 +47,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Aller au contenu
         </a>
         <JsonLd data={bakeryJsonLd()} />
-        <IntroLoader />
-        <SmoothScroll />
-        <TransitionProvider>
-          <ScrollProgress />
-          <Header />
-          <main id="main" tabIndex={-1} className="outline-none">
-            {children}
-          </main>
-          <Footer />
-          <MobileActionBar />
-        </TransitionProvider>
-        <Cursor />
+        <Header />
+        <main id="main" tabIndex={-1} className="outline-none">
+          {children}
+        </main>
+        <Footer />
+        <MobileActionBar />
       </body>
     </html>
   );

@@ -18,7 +18,7 @@ Node.js 20.9 ou plus récent.
 
 | Page | Route | Personnalité |
 |---|---|---|
-| Accueil | `/` | Intro animée, hero qui se transforme en triptyque, shooting du fraisier, vitrine horizontale |
+| Accueil | `/` | Page courte en 5 sections : accroche, créations, savoir-faire, sur mesure, adresse |
 | Nos créations | `/nos-creations` | Catalogue filtrable (`?categorie=pains`…), fiches produit, plein écran |
 | Gâteaux sur mesure | `/gateaux-sur-mesure` | Configurateur en 5 étapes, envoi Formspree |
 | Notre maison | `/notre-maison` | Chapitres éditoriaux et galerie photo |
@@ -44,6 +44,7 @@ Tout se fait dans quelques fichiers, sans toucher aux composants :
 - **Prix** : laisser `null` tant qu’ils ne sont pas confirmés. Aucun prix n’est inventé.
 - **Allergènes** : ne renseigner que des allergènes confirmés. Vide = « liste disponible en boutique ».
 - **Remplacer une photo** : déposer le nouveau fichier au même chemin dans `public/images/`. `scripts/prepare-images.mjs` montre comment les originaux ont été convertis.
+- **Photos d’ambiance** : `public/images/ambiance/`, licence CC0 (WordPress Photo Directory), recréées par `scripts/prepare-stock-images.mjs`. Elles se déclarent avec `stock()` dans `data/images.ts` et leurs crédits s’ajoutent seuls aux mentions légales. Une photo qui montre un produit porte la mention « Photo d’illustration ». Le catalogue et la galerie de « Notre maison » affirment montrer la boutique : n’y mettre que ses propres photos.
 
 ## Variables d’environnement
 
@@ -88,33 +89,29 @@ Protection : champ pot de miel (`_gotcha`), validation Zod côté client, filtra
 ## Technique
 
 - Next.js 16, React 19, TypeScript strict, Tailwind CSS 4.
-- GSAP + ScrollTrigger + SplitText : séquences au défilement, révélations par masque, intro.
+- Défilement natif du navigateur. Les photos apparaissent en CSS pur (`.reveal`, `animation-timeline: view()`) : rien ne dépend de JavaScript pour s’afficher.
 - Motion : menu mobile, modales, filtres, étapes du configurateur.
-- Lenis : défilement doux sur souris/trackpad uniquement ; le tactile garde le défilement natif.
 - Radix Dialog (base de shadcn/ui) pour les fenêtres accessibles, React Hook Form + Zod, Lucide.
 - `next/image` : AVIF/WebP, tailles adaptées à chaque écran, flou de chargement, aucun décalage de mise en page.
 - Polices auto-hébergées (Cormorant, Manrope, Damion) : aucune requête vers Google Fonts.
 - Logo : vectorisé depuis le fichier fourni (`public/logo-le-duo-dartisans.svg`, tracé dans `lib/logo-path.ts`).
 
-**Animations** : `prefers-reduced-motion` respecté partout (intro réduite à un fondu, pas de séquences épinglées, triptyque statique). Sur mobile et tablette, les séquences épinglées sont remplacées par des carrousels tactiles. L’intro ne se rejoue qu’une fois par semaine et peut être passée (bouton, clic ou Échap).
+**Animations** : volontairement limitées pour éviter les bugs de défilement. GSAP, ScrollTrigger, Lenis, l’intro, le rideau de transition et le curseur personnalisé ont été retirés : la combinaison faisait planter l’accueil au rechargement et bloquait la molette dans les fenêtres. `prefers-reduced-motion` est respecté partout.
 
 **Cookies** : aucun cookie de mesure ni publicitaire, donc pas de bandeau. La carte Google ne se charge qu’au clic du visiteur.
-
-**Mesures Lighthouse (mobile simulé, build de production)** : accessibilité 100, bonnes pratiques 100, SEO 100 ; CLS ≈ 0. La performance (≈ 60–85 selon la page) est limitée surtout par la mise en scène d’ouverture (intro + dévoilement du hero), qui ne joue qu’à la première visite.
 
 ### Structure
 
 ```
 app/                 pages, métadonnées, sitemap, robots, icônes
-components/animations  intro, transitions, défilement, révélations, curseur
 components/layout      en-tête, pied de page, barre mobile, fil d’Ariane
 components/home        sections de l’accueil
 components/products    catalogue et fiche produit
 components/order       configurateur, calendrier, schéma, envoi Formspree
 data/                  produits, images, options de commande
-lib/                   configuration, horaires, dates, SEO, GSAP
+lib/                   configuration, horaires, dates, SEO
 public/images/         photographies optimisées
 styles/globals.css     jetons de design (couleurs, typographie, moulures)
 ```
 
-Crédits photos : Le Duo d’Artisans. Aucune photo de banque d’images n’est utilisée.
+Crédits photos : Le Duo d’Artisans pour les produits et la boutique ; photos d’ambiance en CC0 créditées dans les mentions légales.

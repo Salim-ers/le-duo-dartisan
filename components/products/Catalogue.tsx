@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
+import { LayoutGroup, motion } from "motion/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import { Photo } from "@/components/ui/Photo";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { categories, isCategory, products, type CategoryId, type Product } from "@/data/products";
@@ -20,15 +20,31 @@ const LAYOUT = [
   { span: "md:col-span-4", aspect: "aspect-square", sizes: "(min-width: 768px) 32vw, 100vw" },
 ];
 
+function CatalogueFromUrl() {
+  const raw = useSearchParams().get("categorie");
+  return <CatalogueView active={isCategory(raw) ? raw : "tout"} />;
+}
+
+/**
+ * La liste complète reste dans le HTML généré (référencement, pas de saut à
+ * l'affichage) ; le filtre de l'URL s'applique dès que la page est chargée.
+ */
 export function Catalogue() {
-  const params = useSearchParams();
+  return (
+    <Suspense fallback={<CatalogueView active="tout" />}>
+      <CatalogueFromUrl />
+    </Suspense>
+  );
+}
+
+function CatalogueView({ active }: { active: CategoryId | "tout" }) {
   const router = useRouter();
   const pathname = usePathname();
-  const raw = params.get("categorie");
-  const active: CategoryId | "tout" = isCategory(raw) ? raw : "tout";
+  const top = useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = useState<Product | null>(null);
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [filtered, setFiltered] = useState(false);
 
   const list = useMemo(
     () => (active === "tout" ? products : products.filter((p) => p.category === active)),
@@ -36,8 +52,11 @@ export function Catalogue() {
   );
 
   const setCategory = (id: CategoryId | "tout") => {
-    const url = id === "tout" ? pathname : `${pathname}?categorie=${id}`;
-    router.replace(url, { scroll: false });
+    setFiltered(true);
+    router.replace(id === "tout" ? pathname : `${pathname}?categorie=${id}`, { scroll: false });
+    // Si l'on a défilé dans la liste, on revient à son début : la nouvelle liste peut être bien plus courte.
+    const el = top.current;
+    if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView();
   };
 
   const counts = useMemo(() => {
@@ -48,7 +67,9 @@ export function Catalogue() {
 
   return (
     <>
-      <div className="sticky top-0 z-30 border-y border-line bg-cream/92 backdrop-blur-md">
+      {/* --header-h et non --sticky-top : en remontant, l'en-tête masqué réapparaît. */}
+      <div ref={top} className="scroll-mt-[var(--header-h)]" />
+      <div className="sticky top-[var(--sticky-top)] z-30 border-y border-line bg-cream/92 backdrop-blur-md transition-[top] duration-500 ease-[var(--ease-luxe)]">
         <LayoutGroup id="filters">
           <div role="tablist" aria-label="Catégories" className="scroll-row container-x flex gap-1 overflow-x-auto py-2 sm:gap-2">
             {[{ id: "tout" as const, short: "Toutes nos créations" }, ...categories].map((c) => {
@@ -86,58 +107,45 @@ export function Catalogue() {
         <p className="sr-only">
           {list.length} création{list.length > 1 ? "s" : ""} affichée{list.length > 1 ? "s" : ""}
         </p>
-        <motion.ul layout className="grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12 md:gap-x-8 md:gap-y-20">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {list.map((p, i) => {
-              const l = LAYOUT[i % LAYOUT.length];
-              const offset = i % 5 === 1 ? "md:mt-24" : i % 5 === 3 ? "md:mt-12" : "";
-              return (
-                <motion.li
-                  key={p.id}
-                  layout
-                  className={cn(l.span, offset)}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0, transition: { duration: 0.8, ease, delay: Math.min(i, 6) * 0.07 } }}
-                  exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.3 } }}
+        <ul
+          key={active}
+          className={cn("grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12 md:gap-x-8 md:gap-y-20", filtered && "fade-up")}
+        >
+          {list.map((p, i) => {
+            const l = LAYOUT[i % LAYOUT.length];
+            const offset = i % 5 === 1 ? "md:mt-24" : i % 5 === 3 ? "md:mt-12" : "";
+            return (
+              <li key={p.id} className={cn(l.span, offset)}>
+                <button
+                  type="button"
+                  onClick={() => setSelected(p)}
+                  className="group block w-full text-left"
+                  aria-haspopup="dialog"
                 >
-                  <button
-                    type="button"
-                    onClick={() => setSelected(p)}
-                    data-cursor="Voir"
-                    className="group block w-full text-left"
-                    aria-haspopup="dialog"
-                  >
-                    <div className={cn("relative overflow-hidden bg-paper", l.aspect)}>
-                      <Photo
-                        name={p.image}
-                        sizes={l.sizes}
-                        imgClassName="transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.06]"
-                      />
-                      <span
-                        aria-hidden="true"
-                        className="absolute inset-3 border border-ivory/0 transition-colors duration-700 group-hover:border-ivory/70"
-                      />
-                      {p.customizable && (
-                        <span className="absolute left-4 top-4 rounded-full bg-ivory/92 px-3 py-1 text-xs font-semibold text-blue-deep">
-                          Personnalisable
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-5 flex items-baseline justify-between gap-6">
-                      <h2 className="t-h3 text-blue-deep transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:translate-x-1">
-                        {p.name}
-                      </h2>
-                      <span className="t-caption shrink-0 text-mute">
-                        {categories.find((c) => c.id === p.category)?.short}
+                  <div className={cn("relative overflow-hidden bg-paper", l.aspect)}>
+                    <Photo
+                      name={p.image}
+                      sizes={l.sizes}
+                      imgClassName="transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:scale-[1.04]"
+                    />
+                    {p.customizable && (
+                      <span className="absolute left-4 top-4 rounded-full bg-ivory/92 px-3 py-1 text-xs font-semibold text-blue-deep">
+                        Personnalisable
                       </span>
-                    </div>
-                    <p className="mt-2 max-w-[46ch] text-[0.95rem] leading-relaxed text-ink/70">{p.description}</p>
-                  </button>
-                </motion.li>
-              );
-            })}
-          </AnimatePresence>
-        </motion.ul>
+                    )}
+                  </div>
+                  <div className="mt-5 flex items-baseline justify-between gap-6">
+                    <h2 className="t-h3 text-blue-deep">{p.name}</h2>
+                    <span className="t-caption shrink-0 text-mute">
+                      {categories.find((c) => c.id === p.category)?.short}
+                    </span>
+                  </div>
+                  <p className="mt-2 max-w-[46ch] text-[0.95rem] leading-relaxed text-ink/70">{p.description}</p>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
 
         {list.length === 0 && (
           <div className="py-24 text-center">

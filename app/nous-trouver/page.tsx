@@ -1,11 +1,11 @@
 import { Navigation, Phone } from "lucide-react";
-import { RevealImage, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ButtonLink } from "@/components/ui/Button";
 import { HoursTable } from "@/components/ui/HoursTable";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { MapEmbed } from "@/components/ui/MapEmbed";
 import { Photo } from "@/components/ui/Photo";
+import { Reveal } from "@/components/ui/Reveal";
 import { pageMetadata } from "@/lib/seo";
 import { mapsDirectionsUrl, siteConfig, telHref } from "@/lib/site.config";
 
@@ -21,15 +21,13 @@ export default function FindUsPage() {
   return (
     <>
       <header className="relative">
-        <RevealImage kind="down" parallax={4} className="moulure mx-3 h-[62svh] min-h-[380px] bg-paper lg:mx-[var(--gutter)] lg:h-[78svh]">
-          <Photo name="facade" sizes="100vw" parallax preload focus="50% 45%" />
-        </RevealImage>
+        <Reveal className="moulure mx-3 h-[62svh] min-h-[380px] bg-paper lg:mx-[var(--gutter)] lg:h-[78svh]">
+          <Photo name="facade" sizes="100vw" preload focus="50% 45%" />
+        </Reveal>
         <div className="container-x relative -mt-20 sm:-mt-28">
           <div className="max-w-3xl bg-cream pr-6 pt-8 sm:pr-12 sm:pt-10">
             <Breadcrumbs items={[{ name: "Nous trouver", path: "/nous-trouver" }]} />
-            <SplitReveal as="h1" onStage className="t-mega mt-6 text-blue-deep">
-              Nous trouver
-            </SplitReveal>
+            <h1 className="t-mega mt-6 text-blue-deep">Nous trouver</h1>
           </div>
         </div>
       </header>

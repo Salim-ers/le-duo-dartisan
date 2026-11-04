@@ -1,4 +1,5 @@
 import { LegalPage, LegalValue } from "@/components/layout/LegalPage";
+import { images, type SiteImage } from "@/data/images";
 import { pageMetadata } from "@/lib/seo";
 import { fullAddress, siteConfig, telHref } from "@/lib/site.config";
 
@@ -10,6 +11,7 @@ export const metadata = pageMetadata({
 
 export default function LegalNoticePage() {
   const l = siteConfig.legal;
+  const stockPhotos = (Object.values(images) as SiteImage[]).filter((i) => i.source === "stock");
   return (
     <LegalPage title="Mentions légales" path="/mentions-legales" updated={l.lastUpdated}>
       <h2>Éditeur du site</h2>
@@ -73,14 +75,30 @@ export default function LegalNoticePage() {
       <h2>Propriété intellectuelle</h2>
       <p>
         Les photographies, le logo, les textes et la mise en page de ce site sont la propriété de {siteConfig.name} ou
-        sont utilisés avec son autorisation. Toute reproduction, même partielle, est soumise à autorisation préalable.
+        sont utilisés avec son autorisation, à l’exception des photographies d’ambiance libres de droit créditées
+        ci-dessous. Toute reproduction, même partielle, des éléments appartenant à {siteConfig.name} est soumise à
+        autorisation préalable.
       </p>
 
       <h2>Crédits</h2>
       <p>
-        Photographies : {siteConfig.name}. Les visuels présentent des créations de la boutique ; l’assortiment réel
-        varie selon les jours et les saisons.
+        Photographies des produits et de la boutique : {siteConfig.name}. L’assortiment réel varie selon les jours et
+        les saisons.
       </p>
+      <p>
+        Photographies d’ambiance (licence CC0, sans lien avec les produits de la boutique), issues du WordPress Photo
+        Directory :
+      </p>
+      <ul>
+        {stockPhotos.map((p) => (
+          <li key={p.credit?.url}>
+            <a href={p.credit?.url} target="_blank" rel="noopener noreferrer">
+              {p.credit?.author}
+            </a>{" "}
+            : {p.alt.charAt(0).toLowerCase() + p.alt.slice(1)}
+          </li>
+        ))}
+      </ul>
       <p>Typographies : Cormorant, Manrope et Damion, sous licence SIL Open Font License, hébergées avec le site.</p>
 
       <h2>Informations sur les produits</h2>

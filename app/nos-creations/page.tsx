@@ -1,9 +1,8 @@
-import { Suspense } from "react";
-import { RevealImage, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Catalogue } from "@/components/products/Catalogue";
 import { ButtonLink } from "@/components/ui/Button";
 import { Photo } from "@/components/ui/Photo";
+import { Reveal } from "@/components/ui/Reveal";
 import { showcaseDetails } from "@/data/products";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site.config";
@@ -21,9 +20,7 @@ export default function CreationsPage() {
       <header className="container-x pb-14 pt-10 lg:pb-20 lg:pt-16">
         <Breadcrumbs items={[{ name: "Nos créations", path: "/nos-creations" }]} />
         <div className="mt-10 grid items-end gap-10 lg:grid-cols-12">
-          <SplitReveal as="h1" onStage className="t-mega text-blue-deep lg:col-span-8">
-            Nos créations
-          </SplitReveal>
+          <h1 className="t-mega text-blue-deep lg:col-span-8">Nos créations</h1>
           <p className="t-lead max-w-md text-ink/80 lg:col-span-4 lg:pb-4">
             Ce que vous trouvez en boutique, photographié chez nous. L’assortiment évolue avec les jours et les
             saisons : n’hésitez pas à nous demander les créations du moment.
@@ -31,14 +28,12 @@ export default function CreationsPage() {
         </div>
       </header>
 
-      <RevealImage kind="up" parallax={5} className="moulure mx-3 aspect-[16/10] bg-paper sm:aspect-[16/7] lg:mx-[var(--gutter)] lg:aspect-[16/6]">
-        <Photo name="vitrineEclairs" sizes="100vw" parallax preload focus="50% 55%" />
-      </RevealImage>
+      <Reveal className="moulure mx-3 aspect-[16/10] bg-paper sm:aspect-[16/7] lg:mx-[var(--gutter)] lg:aspect-[16/6]">
+        <Photo name="vitrineEclairs" sizes="100vw" preload focus="50% 55%" />
+      </Reveal>
 
       <div className="mt-16 lg:mt-24">
-        <Suspense fallback={<div className="h-[60vh]" aria-hidden="true" />}>
-          <Catalogue />
-        </Suspense>
+        <Catalogue />
       </div>
 
       {siteConfig.catalogue.showShowcaseDetails && (
@@ -67,9 +62,7 @@ export default function CreationsPage() {
 
       <section className="on-dark relative overflow-hidden bg-blue-deep py-24 text-ivory grain lg:py-32">
         <div className="container-x relative flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
-          <SplitReveal as="h2" className="t-h1 max-w-[16ch]">
-            Une création à partager, rien que pour vous ?
-          </SplitReveal>
+          <h2 className="t-h1 max-w-[16ch]">Une création à partager, rien que pour vous ?</h2>
           <ButtonLink href="/gateaux-sur-mesure" variant="light">
             Imaginer mon gâteau
           </ButtonLink>

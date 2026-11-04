@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import { RevealImage, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { OrderConfigurator } from "@/components/order/OrderConfigurator";
+import { OrderConfigurator, OrderConfiguratorFromUrl } from "@/components/order/OrderConfigurator";
 import { Photo } from "@/components/ui/Photo";
+import { Reveal } from "@/components/ui/Reveal";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig, telHref } from "@/lib/site.config";
 
@@ -27,9 +27,7 @@ export default function CustomCakePage() {
           <div className="lg:col-span-6">
             <Breadcrumbs items={[{ name: "Gâteaux sur mesure", path: "/gateaux-sur-mesure" }]} />
             <p className="mt-12 font-script text-[2rem] leading-none text-blue">Sur mesure</p>
-            <SplitReveal as="h1" onStage className="t-h1 mt-5 max-w-[13ch] text-blue-deep">
-              Votre gâteau, imaginé avec vous.
-            </SplitReveal>
+            <h1 className="t-h1 mt-5 max-w-[13ch] text-blue-deep">Votre gâteau, imaginé avec vous.</h1>
             <p className="t-lead mt-8 max-w-lg text-ink/80">
               Anniversaire, mariage, baptême ou réception : décrivez-nous votre projet en quelques minutes. La boutique
               vous rappelle pour en parler et confirmer chaque détail.
@@ -45,20 +43,21 @@ export default function CustomCakePage() {
             </ol>
           </div>
           <div className="relative min-h-[440px] lg:col-span-6 lg:min-h-[640px]">
-            <RevealImage kind="arch" parallax={4} className="absolute right-0 top-0 aspect-[4/5] w-[78%] rounded-t-[999px] bg-paper">
-              <Photo name="numberCake" sizes="(min-width: 1024px) 38vw, 75vw" parallax preload />
-            </RevealImage>
-            <RevealImage kind="up" delay={0.3} className="absolute bottom-0 left-0 aspect-square w-[44%] border-[6px] border-cream bg-paper">
+            <Reveal className="absolute right-0 top-0 aspect-[4/5] w-[78%] rounded-t-[999px] bg-paper">
+              <Photo name="numberCake" sizes="(min-width: 1024px) 38vw, 75vw" preload />
+            </Reveal>
+            <Reveal className="absolute bottom-0 left-0 aspect-square w-[44%] border-[6px] border-cream bg-paper">
               <Photo name="fraisier" sizes="(min-width: 1024px) 20vw, 42vw" />
-            </RevealImage>
+            </Reveal>
           </div>
         </div>
       </header>
 
       <section id="demande" aria-label="Formulaire de demande" className="scroll-mt-24 bg-paper py-16 lg:py-24">
         <div className="container-x">
-          <Suspense fallback={<div className="h-[70vh]" aria-hidden="true" />}>
-            <OrderConfigurator />
+          {/* Le formulaire reste dans le HTML généré : rien ne saute à l'affichage. */}
+          <Suspense fallback={<OrderConfigurator inspiration={null} />}>
+            <OrderConfiguratorFromUrl />
           </Suspense>
         </div>
       </section>

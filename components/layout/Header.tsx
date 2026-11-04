@@ -2,11 +2,10 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
-import { TransitionLink } from "@/components/animations/PageTransition";
-import { getLenis } from "@/components/animations/SmoothScroll";
 import { ButtonLink } from "@/components/ui/Button";
 import { fullAddress, navigation, siteConfig, telHref } from "@/lib/site.config";
 import { cn } from "@/lib/utils";
@@ -51,33 +50,33 @@ export function Header() {
     setHidden(false);
   }
 
+  // Les barres collantes (filtres du catalogue) se calent sous l'en-tête quand il est visible.
   useEffect(() => {
-    const lenis = getLenis();
-    if (open) lenis?.stop();
-    else lenis?.start();
-  }, [open]);
+    document.documentElement.toggleAttribute("data-header-hidden", hidden && !open);
+  }, [hidden, open]);
 
   return (
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-[60] transition-[transform,background-color,box-shadow] duration-500 ease-[var(--ease-luxe)]",
+          // right-scroll-bar-position : évite que l'en-tête saute quand une fenêtre verrouille le défilement.
+          "right-scroll-bar-position fixed inset-x-0 top-0 z-[60] transition-[transform,background-color,box-shadow] duration-500 ease-[var(--ease-luxe)]",
           hidden && !open ? "-translate-y-full" : "translate-y-0",
           scrolled ? "bg-cream/88 shadow-[0_1px_0_rgb(18_61_88/0.08)] backdrop-blur-md" : "bg-cream",
         )}
       >
         <div className="container-x flex h-[var(--header-h)] items-center justify-between gap-6">
-          <TransitionLink href="/" className="relative z-[2] shrink-0 text-blue" aria-label={`${siteConfig.name}, accueil`}>
+          <Link href="/" className="relative z-[2] shrink-0 text-blue" aria-label={`${siteConfig.name}, accueil`}>
             <Logo className="w-[150px] sm:w-[172px] lg:w-[196px]" title="" />
-          </TransitionLink>
+          </Link>
 
           <nav aria-label="Navigation principale" className="hidden lg:block">
-            <ul className="flex items-center gap-9">
+            <ul className="flex items-center gap-5 whitespace-nowrap xl:gap-9">
               {navigation.map((item) => {
                 const active = pathname.startsWith(item.href);
                 return (
                   <li key={item.href} className="relative">
-                    <TransitionLink
+                    <Link
                       href={item.href}
                       aria-current={active ? "page" : undefined}
                       className={cn(
@@ -86,7 +85,7 @@ export function Header() {
                       )}
                     >
                       {item.label}
-                    </TransitionLink>
+                    </Link>
                     {active && (
                       <motion.span
                         layoutId="nav-underline"
@@ -108,7 +107,7 @@ export function Header() {
               <Phone className="size-4" aria-hidden="true" />
               {siteConfig.phone.display}
             </a>
-            <ButtonLink href="/gateaux-sur-mesure" className="hidden min-h-11 px-5 sm:inline-flex">
+            <ButtonLink href="/gateaux-sur-mesure" className="hidden min-h-11 whitespace-nowrap px-5 sm:inline-flex">
               Commander un gâteau
             </ButtonLink>
 
@@ -146,9 +145,9 @@ export function Header() {
                       >
                         <Dialog.Title className="sr-only">Menu</Dialog.Title>
                         <div className="container-x flex h-[var(--header-h)] items-center justify-between">
-                          <TransitionLink href="/" className="text-ivory" onClick={() => setOpen(false)}>
+                          <Link href="/" className="text-ivory" onClick={() => setOpen(false)}>
                             <Logo className="w-[150px] sm:w-[172px]" />
-                          </TransitionLink>
+                          </Link>
                           <Dialog.Close className="flex min-h-11 items-center gap-3 px-1 text-[0.95rem] font-semibold">
                             Fermer
                             <span className="relative block h-3 w-6" aria-hidden="true">
@@ -167,7 +166,7 @@ export function Header() {
                                   exit={{ y: "105%", transition: { duration: 0.3 } }}
                                   transition={{ duration: 0.8, delay: 0.25 + i * 0.06, ease }}
                                 >
-                                  <TransitionLink
+                                  <Link
                                     href={item.href}
                                     onClick={() => setOpen(false)}
                                     aria-current={pathname === item.href ? "page" : undefined}
@@ -177,7 +176,7 @@ export function Header() {
                                       {String(i + 1).padStart(2, "0")}
                                     </span>
                                     {item.label}
-                                  </TransitionLink>
+                                  </Link>
                                 </motion.div>
                               </li>
                             ))}

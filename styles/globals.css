@@ -24,15 +24,20 @@
   --font-script: "Damion", "Brush Script MT", cursive;
 
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-curtain: cubic-bezier(0.76, 0, 0.24, 1);
 
   --breakpoint-3xl: 1920px;
 }
 
 :root {
   --header-h: 76px;
+  /* Hauteur occupée par l'en-tête : les barres collantes se calent dessous. */
+  --sticky-top: var(--header-h);
   --gutter: clamp(1rem, 3.2vw, 3rem);
   color-scheme: light;
+}
+
+:root[data-header-hidden] {
+  --sticky-top: 0px;
 }
 
 @media (min-width: 1024px) {
@@ -45,17 +50,6 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
-}
-
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: clip;
 }
 
 body {
@@ -163,17 +157,6 @@ body {
     z-index: 2;
   }
 }
-@utility moulure-ink {
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    inset: clamp(8px, 1.1vw, 14px);
-    border: 1px solid rgb(18 61 88 / 0.22);
-    pointer-events: none;
-    z-index: 2;
-  }
-}
 
 @utility container-x {
   width: 100%;
@@ -205,19 +188,34 @@ body {
   aspect-ratio: 5.6108;
 }
 
-/* Lignes de texte révélées par masque (SplitText) */
-.split-line-mask {
-  padding-block: 0.14em 0.1em;
-  margin-block: -0.14em -0.1em;
+/*
+ * Apparition douce des photos au défilement, sans JavaScript : l'animation suit
+ * le défilement, donc rien ne clignote au chargement et rien ne reste masqué.
+ * Navigateur non compatible ou mouvement réduit : la photo est simplement affichée.
+ */
+@supports (animation-timeline: view()) {
+  @media screen and (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 30%;
+    }
+  }
 }
 
-/* Intro : masquée si déjà vue (classe posée avant affichage) */
-html.intro-done #intro-loader {
-  display: none;
+/* Changement de filtre dans le catalogue */
+.fade-up {
+  animation: fade-up 0.5s var(--ease-luxe) both;
 }
-@media (scripting: none) {
-  #intro-loader {
-    display: none;
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -256,15 +254,5 @@ html.intro-done #intro-loader {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-}
-
-@keyframes scroll-cue {
-  0% {
-    transform: translateY(-100%);
-  }
-  60%,
-  100% {
-    transform: translateY(260%);
   }
 }

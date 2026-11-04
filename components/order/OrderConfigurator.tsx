@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -21,14 +22,12 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import { getLenis } from "@/components/animations/SmoothScroll";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { images } from "@/data/images";
 import { inspirations, occasions } from "@/data/order";
 import { formatLongDate } from "@/lib/dates";
 import { siteConfig, telHref } from "@/lib/site.config";
 import { cn } from "@/lib/utils";
-import { TransitionLink } from "@/components/animations/PageTransition";
 import { DatePicker } from "./DatePicker";
 import { Field, FieldError, inputCls } from "./fields";
 import { isDemoMode, submitOrder } from "./formspree";
@@ -59,9 +58,14 @@ type Status = "idle" | "sending" | "success" | "error";
  */
 const keepFocus = (e: React.MouseEvent) => e.preventDefault();
 
-export function OrderConfigurator() {
+/** Lit l'inspiration présélectionnée dans l'URL (?inspiration=number-cake). */
+export function OrderConfiguratorFromUrl() {
   const params = useSearchParams();
-  const preset = INSPIRATION_ALIASES[params.get("inspiration") ?? ""];
+  return <OrderConfigurator inspiration={params.get("inspiration")} />;
+}
+
+export function OrderConfigurator({ inspiration: inspirationParam }: { inspiration: string | null }) {
+  const preset = INSPIRATION_ALIASES[inspirationParam ?? ""];
   const presetInspiration = inspirations.find((i) => i.id === preset);
 
   const [step, setStep] = useState(0);
@@ -115,9 +119,7 @@ export function OrderConfigurator() {
     const el = top.current;
     if (el) {
       const y = el.getBoundingClientRect().top + window.scrollY - 110;
-      const lenis = getLenis();
-      if (lenis) lenis.scrollTo(y, { duration: 0.9 });
-      else window.scrollTo({ top: y, behavior: "smooth" });
+      window.scrollTo({ top: y, behavior: "smooth" });
     }
     heading.current?.focus({ preventScroll: true });
   }, [step, status]);
@@ -541,9 +543,9 @@ export function OrderConfigurator() {
                       <span className="text-[0.95rem] leading-relaxed text-ink/85">
                         J’accepte que mes coordonnées soient utilisées par {siteConfig.name} pour traiter ma demande et me
                         recontacter à son sujet. Elles ne servent à rien d’autre.{" "}
-                        <TransitionLink href="/confidentialite" className="text-blue underline underline-offset-2">
+                        <Link href="/confidentialite" className="text-blue underline underline-offset-2">
                           Politique de confidentialité
-                        </TransitionLink>
+                        </Link>
                       </span>
                     </label>
                     <FieldError id="consent-error" message={errors.consent?.message} />
