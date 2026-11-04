@@ -1,0 +1,129 @@
+import { RevealImage, SplitReveal } from "@/components/animations/Reveal";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { MaisonGallery } from "@/components/maison/MaisonGallery";
+import { ButtonLink } from "@/components/ui/Button";
+import { Photo } from "@/components/ui/Photo";
+import type { ImageKey } from "@/data/images";
+import { pageMetadata } from "@/lib/seo";
+import { cn } from "@/lib/utils";
+
+export const metadata = pageMetadata({
+  title: "Notre maison : une boulangerie-pâtisserie de quartier",
+  description:
+    "Découvrez Le Duo d’Artisans, boulangerie-pâtisserie artisanale rue Anatole France à Rantigny : pains, viennoiseries, pâtisseries et créations sur mesure.",
+  path: "/notre-maison",
+});
+
+/** Chapitres factuels : aucun récit inventé sur les artisans. */
+const chapters: { title: string; text: string; images: [ImageKey, ImageKey?]; flip?: boolean }[] = [
+  {
+    title: "La passion du métier",
+    text: "Derrière la vitrine, il y a des gestes : pétrir, façonner, cuire, garnir, dresser. Un travail de chaque jour, fait pour que le comptoir soit prêt quand vous poussez la porte.",
+    images: ["petrissage", "flansIndividuels"],
+  },
+  {
+    title: "La boulangerie artisanale",
+    text: "La baguette reste le cœur de la maison. Croûte dorée, grignes ouvertes, mie alvéolée : le pain du quotidien, celui qui accompagne tous les repas.",
+    images: ["baguettesCroisees"],
+    flip: true,
+  },
+  {
+    title: "La gourmandise du quotidien",
+    text: "Une viennoiserie pour le matin, un cookie pour le goûter, un sandwich ou une salade pour la pause de midi : de quoi passer nous voir à toute heure.",
+    images: ["painsChocolat", "cookies"],
+  },
+  {
+    title: "Les créations pâtissières",
+    text: "Tartelettes, éclairs, flans, macarons, fruits en trompe-l’œil : la vitrine pâtissière se renouvelle, et les grandes occasions ont droit à leurs gâteaux sur mesure.",
+    images: ["entremetsFruits", "macaronsFramboise"],
+    flip: true,
+  },
+  {
+    title: "Une adresse à Rantigny",
+    text: "Une façade bleue, une enseigne manuscrite et une porte ouverte sur la rue Anatole France : une boulangerie de quartier, pour les habitants de Rantigny et des environs.",
+    images: ["vitrineTartes"],
+  },
+];
+
+export default function MaisonPage() {
+  return (
+    <>
+      <header>
+        <RevealImage kind="circle" parallax={5} className="mx-3 h-[70svh] min-h-[420px] bg-blue-deep lg:mx-[var(--gutter)] lg:h-[86svh]">
+          <Photo name="facade" sizes="100vw" parallax preload />
+        </RevealImage>
+        <div className="container-x grid gap-8 pb-20 pt-12 lg:grid-cols-12 lg:pb-28 lg:pt-16">
+          <div className="lg:col-span-7">
+            <Breadcrumbs items={[{ name: "Notre maison", path: "/notre-maison" }]} />
+            <SplitReveal as="h1" onStage className="t-mega mt-6 text-blue-deep">
+              Notre maison
+            </SplitReveal>
+          </div>
+          <p className="t-lead self-end text-ink/80 lg:col-span-4 lg:col-start-9">
+            Une boulangerie-pâtisserie de quartier où l’on vient pour le pain du jour, et où l’on revient pour les
+            gâteaux des grands jours.
+          </p>
+        </div>
+      </header>
+
+      <div className="grid gap-28 pb-28 lg:gap-44 lg:pb-44">
+        {chapters.map((c, i) => (
+          <section key={c.title} aria-labelledby={`chapitre-${i}`} className="container-x grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
+            <div className={cn("relative lg:col-span-7", c.flip && "lg:order-2 lg:col-start-6")}>
+              <RevealImage
+                kind={c.flip ? "right" : "left"}
+                parallax={5}
+                className={cn("moulure bg-paper", c.images[1] ? "aspect-[4/5] w-[78%]" : "aspect-[4/3] w-full", c.flip && c.images[1] && "ml-auto")}
+              >
+                <Photo name={c.images[0]} sizes="(min-width: 1024px) 50vw, 90vw" parallax />
+              </RevealImage>
+              {c.images[1] && (
+                <RevealImage
+                  kind="up"
+                  delay={0.25}
+                  className={cn("absolute bottom-[-8%] aspect-square w-[42%] border-[6px] border-cream bg-paper", c.flip ? "left-0" : "right-0")}
+                >
+                  <Photo name={c.images[1]} sizes="(min-width: 1024px) 22vw, 40vw" />
+                </RevealImage>
+              )}
+            </div>
+            <div className={cn("lg:col-span-4", c.flip ? "lg:order-1 lg:col-start-1" : "lg:col-start-9")}>
+              <SplitReveal as="h2" className="t-h1 text-blue-deep">
+                <span id={`chapitre-${i}`}>{c.title}</span>
+              </SplitReveal>
+              <p className="t-lead mt-8 text-ink/80">{c.text}</p>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      <section aria-labelledby="galerie" className="bg-ivory py-24 lg:py-36">
+        <div className="container-x">
+          <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end lg:mb-20">
+            <SplitReveal as="h2" className="t-h1 text-blue-deep">
+              <span id="galerie">La maison en images</span>
+            </SplitReveal>
+            <p className="max-w-sm text-ink/70">L’extérieur, les vitrines, les pains, les pâtisseries et la fabrication, photographiés à la boutique.</p>
+          </div>
+          <MaisonGallery />
+        </div>
+      </section>
+
+      <section className="on-dark relative overflow-hidden bg-blue-deep py-24 text-ivory grain lg:py-32">
+        <div className="container-x relative flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
+          <SplitReveal as="h2" className="t-h1 max-w-[14ch]">
+            Passez nous voir, la porte est ouverte.
+          </SplitReveal>
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href="/nous-trouver" variant="light">
+              Nous trouver
+            </ButtonLink>
+            <ButtonLink href="/nos-creations" variant="outline-light">
+              Découvrir nos créations
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
