@@ -18,11 +18,11 @@ Node.js 20.9 ou plus récent.
 
 | Page | Route | Personnalité |
 |---|---|---|
-| Accueil | `/` | Page courte en 5 sections : accroche, créations, savoir-faire, sur mesure, adresse |
-| Nos créations | `/nos-creations` | Catalogue filtrable (`?categorie=pains`…), fiches produit, plein écran |
-| Gâteaux sur mesure | `/gateaux-sur-mesure` | Configurateur en 5 étapes, envoi Formspree |
-| Notre maison | `/notre-maison` | Chapitres éditoriaux et galerie photo |
-| Nous trouver | `/nous-trouver` | Adresse, appel, itinéraire, horaires, carte Google |
+| Accueil | `/` | Logo qui s’ouvre sur la page, hero qui se referme en arche, galerie horizontale, phrase qui s’allume mot à mot, shooting du gâteau |
+| Nos créations | `/nos-creations` | Uniquement le catalogue : filtres (`?categorie=pains`…), fiches produit, plein écran |
+| Gâteaux sur mesure | `/gateaux-sur-mesure` | Uniquement la commande : configurateur en 5 étapes, envoi Formspree |
+| Notre maison | `/notre-maison` | Le métier en 4 chapitres (le geste, la pâte, la cuisson, le détail), image collée qui change au défilement |
+| Nous trouver | `/nous-trouver` | Façade de la boutique, adresse, appel, itinéraire, horaires, carte Google |
 | Mentions légales | `/mentions-legales` | |
 | Confidentialité | `/confidentialite` | RGPD, cookies, sous-traitants |
 
@@ -44,7 +44,8 @@ Tout se fait dans quelques fichiers, sans toucher aux composants :
 - **Prix** : laisser `null` tant qu’ils ne sont pas confirmés. Aucun prix n’est inventé.
 - **Allergènes** : ne renseigner que des allergènes confirmés. Vide = « liste disponible en boutique ».
 - **Remplacer une photo** : déposer le nouveau fichier au même chemin dans `public/images/`. `scripts/prepare-images.mjs` montre comment les originaux ont été convertis.
-- **Photos d’ambiance** : `public/images/ambiance/`, licence CC0 (WordPress Photo Directory), recréées par `scripts/prepare-stock-images.mjs`. Elles se déclarent avec `stock()` dans `data/images.ts` et leurs crédits s’ajoutent seuls aux mentions légales. Une photo qui montre un produit porte la mention « Photo d’illustration ». Le catalogue et la galerie de « Notre maison » affirment montrer la boutique : n’y mettre que ses propres photos.
+- **Règle des photos** : chaque photo n’apparaît qu’à un seul endroit du site, et aucune ne doit ressembler à une autre. La façade reste sur « Nous trouver ». Le catalogue affirme montrer la boutique : n’y mettre que ses propres photos.
+- **Photos libres de droit** : `public/images/ambiance/`, licence Unsplash, recréées par `scripts/prepare-stock-images.mjs`. Elles se déclarent avec `stock()` dans `data/images.ts` et leurs crédits s’ajoutent seuls aux mentions légales. Celles qui montrent un produit portent la mention « Photo d’illustration ».
 
 ## Variables d’environnement
 
@@ -89,14 +90,20 @@ Protection : champ pot de miel (`_gotcha`), validation Zod côté client, filtra
 ## Technique
 
 - Next.js 16, React 19, TypeScript strict, Tailwind CSS 4.
-- Défilement natif du navigateur. Les photos apparaissent en CSS pur (`.reveal`, `animation-timeline: view()`) : rien ne dépend de JavaScript pour s’afficher.
+- GSAP + ScrollTrigger + SplitText : intro, séquences au défilement, révélation des titres.
 - Motion : menu mobile, modales, filtres, étapes du configurateur.
+- Lenis : défilement doux sur souris/trackpad uniquement ; le tactile garde le défilement natif.
 - Radix Dialog (base de shadcn/ui) pour les fenêtres accessibles, React Hook Form + Zod, Lucide.
 - `next/image` : AVIF/WebP, tailles adaptées à chaque écran, flou de chargement, aucun décalage de mise en page.
 - Polices auto-hébergées (Cormorant, Manrope, Damion) : aucune requête vers Google Fonts.
 - Logo : vectorisé depuis le fichier fourni (`public/logo-le-duo-dartisans.svg`, tracé dans `lib/logo-path.ts`).
 
-**Animations** : volontairement limitées pour éviter les bugs de défilement. GSAP, ScrollTrigger, Lenis, l’intro, le rideau de transition et le curseur personnalisé ont été retirés : la combinaison faisait planter l’accueil au rechargement et bloquait la molette dans les fenêtres. `prefers-reduced-motion` est respecté partout.
+**Animations** : le motion design fait partie de l’identité du site. L’intro se joue une fois par visite et peut être passée (bouton, clic ou Échap). `prefers-reduced-motion` est respecté partout.
+
+Trois règles évitent les bugs (plantage au rechargement, molette bloquée dans les fenêtres, clignotements) :
+1. **Pas de `pin` ScrollTrigger** : les séquences utilisent `position: sticky` et un `scrub`.
+2. **Pas de `once` ScrollTrigger** : les apparitions uniques passent par IntersectionObserver (`components/animations/Reveal.tsx`).
+3. **États de départ en CSS** : la classe `.anim`, posée avant le premier affichage, masque ce qui doit apparaître. Si le JavaScript ne démarre pas, elle est retirée au bout de 8 secondes.
 
 **Cookies** : aucun cookie de mesure ni publicitaire, donc pas de bandeau. La carte Google ne se charge qu’au clic du visiteur.
 
@@ -104,14 +111,15 @@ Protection : champ pot de miel (`_gotcha`), validation Zod côté client, filtra
 
 ```
 app/                 pages, métadonnées, sitemap, robots, icônes
+components/animations  intro, transitions, défilement, révélations, curseur, farine
 components/layout      en-tête, pied de page, barre mobile, fil d’Ariane
 components/home        sections de l’accueil
 components/products    catalogue et fiche produit
 components/order       configurateur, calendrier, schéma, envoi Formspree
 data/                  produits, images, options de commande
-lib/                   configuration, horaires, dates, SEO
+lib/                   configuration, horaires, dates, SEO, GSAP
 public/images/         photographies optimisées
 styles/globals.css     jetons de design (couleurs, typographie, moulures)
 ```
 
-Crédits photos : Le Duo d’Artisans pour les produits et la boutique ; photos d’ambiance en CC0 créditées dans les mentions légales.
+Crédits photos : Le Duo d’Artisans pour les produits et la boutique ; photos d’illustration sous licence Unsplash, créditées dans les mentions légales.

@@ -24,6 +24,8 @@
   --font-script: "Damion", "Brush Script MT", cursive;
 
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-curtain: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
 
   --breakpoint-3xl: 1920px;
 }
@@ -50,6 +52,17 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
 }
 
 body {
@@ -188,35 +201,72 @@ body {
   aspect-ratio: 5.6108;
 }
 
+/* Lignes de texte révélées par masque (SplitText) */
+.split-line-mask {
+  padding-block: 0.14em 0.1em;
+  margin-block: -0.14em -0.1em;
+}
+
+/* Intro : masquée si déjà jouée pendant la visite (classe posée avant affichage) */
+html.intro-done #intro-loader {
+  display: none;
+}
+@media (scripting: none) {
+  #intro-loader {
+    display: none;
+  }
+}
+
 /*
- * Apparition douce des photos au défilement, sans JavaScript : l'animation suit
- * le défilement, donc rien ne clignote au chargement et rien ne reste masqué.
- * Navigateur non compatible ou mouvement réduit : la photo est simplement affichée.
+ * États de départ des animations. La classe .anim est posée avant le premier
+ * affichage (voir IntroLoader) : rien n'apparaît puis ne disparaît au chargement.
+ * Sans JavaScript ou avec le mouvement réduit, tout est simplement affiché.
  */
-@supports (animation-timeline: view()) {
-  @media screen and (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: fade-up linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 30%;
-    }
-  }
+.anim [data-split],
+.anim [data-fade] {
+  opacity: 0;
+}
+.anim.no-intro [data-frame] {
+  clip-path: inset(22% 16% 22% 16%);
 }
 
-/* Changement de filtre dans le catalogue */
-.fade-up {
-  animation: fade-up 0.5s var(--ease-luxe) both;
+/* Photographies révélées par masque à leur entrée dans l'écran (voir RevealImage) */
+.anim [data-reveal="up"] {
+  clip-path: inset(100% 0% 0% 0%);
 }
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.anim [data-reveal="down"] {
+  clip-path: inset(0% 0% 100% 0%);
+}
+.anim [data-reveal="left"] {
+  clip-path: inset(0% 100% 0% 0%);
+}
+.anim [data-reveal="right"] {
+  clip-path: inset(0% 0% 0% 100%);
+}
+.anim [data-reveal="circle"] {
+  clip-path: circle(0% at 50% 55%);
+}
+.anim [data-reveal="arch"] {
+  clip-path: inset(100% 0% 0% 0% round 50% 50% 0 0);
+}
+.anim [data-reveal] img {
+  transform: scale(1.18);
+}
+.anim [data-reveal][data-in] {
+  clip-path: inset(0% 0% 0% 0%);
+  transition: clip-path 1.4s var(--ease-reveal) var(--reveal-delay, 0s);
+}
+.anim [data-reveal="circle"][data-in] {
+  clip-path: circle(75% at 50% 50%);
+}
+.anim [data-reveal="arch"][data-in] {
+  clip-path: inset(0% 0% 0% 0% round 50% 50% 0 0);
+}
+.anim [data-reveal][data-in] img {
+  transform: none;
+  transition:
+    transform 1.8s var(--ease-reveal) var(--reveal-delay, 0s),
+    scale 1.2s var(--ease-luxe);
 }
 
 /* Barre d'actions mobile : réserver l'espace en bas */
@@ -254,5 +304,15 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(260%);
   }
 }

@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { InstagramIcon as Instagram } from "@/components/ui/InstagramIcon";
+import { TransitionLink } from "@/components/animations/PageTransition";
+import { RevealImage } from "@/components/animations/Reveal";
 import { groupedHours } from "@/lib/hours";
 import { fullAddress, mapsDirectionsUrl, navigation, siteConfig, telHref } from "@/lib/site.config";
 import { Logo } from "./Logo";
@@ -10,10 +11,10 @@ export function Footer() {
 
   return (
     <footer className="on-dark relative overflow-hidden bg-blue text-ivory grain">
-      <div className="container-x relative pt-16 lg:pt-20">
+      <div className="container-x relative pt-20 lg:pt-28">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_0.9fr] lg:gap-10">
           <div className="max-w-sm">
-            <Logo className="block w-[210px] text-ivory" title={siteConfig.name} />
+            <p className="t-h3 font-[380]">Une boulangerie de quartier, rue Anatole France.</p>
             <a
               href={mapsDirectionsUrl}
               target="_blank"
@@ -46,15 +47,15 @@ export function Footer() {
             <h2 className="t-caption text-ivory/70">Le site</h2>
             <ul className="mt-4 grid gap-2">
               <li>
-                <Link href="/" className="link-draw">
+                <TransitionLink href="/" className="link-draw">
                   Accueil
-                </Link>
+                </TransitionLink>
               </li>
               {navigation.map((n) => (
                 <li key={n.href}>
-                  <Link href={n.href} className="link-draw">
+                  <TransitionLink href={n.href} className="link-draw">
                     {n.label}
-                  </Link>
+                  </TransitionLink>
                 </li>
               ))}
             </ul>
@@ -71,23 +72,32 @@ export function Footer() {
               <Instagram className="size-5" aria-hidden="true" />
               {ig.handle}
             </a>
+            <p className="mt-6 max-w-[16rem] t-small text-ivory/70">
+              Les créations du moment et les nouveautés de la vitrine, au fil des saisons.
+            </p>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-ivory/15 py-6 text-[0.85rem] text-ivory/70 sm:flex-row sm:items-center sm:justify-between lg:mt-16">
+        <RevealImage kind="up" className="mt-20 lg:mt-28">
+          <div aria-hidden="true">
+            <Logo className="block w-full text-ivory" title="" />
+          </div>
+        </RevealImage>
+
+        <div className="flex flex-col gap-3 border-t border-ivory/15 py-6 text-[0.85rem] text-ivory/70 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {siteConfig.name}, Rantigny (Oise)
           </p>
           <ul className="flex gap-6">
             <li>
-              <Link href="/mentions-legales" className="link-draw">
+              <TransitionLink href="/mentions-legales" className="link-draw">
                 Mentions légales
-              </Link>
+              </TransitionLink>
             </li>
             <li>
-              <Link href="/confidentialite" className="link-draw">
+              <TransitionLink href="/confidentialite" className="link-draw">
                 Confidentialité
-              </Link>
+              </TransitionLink>
             </li>
           </ul>
         </div>

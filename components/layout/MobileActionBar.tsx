@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CakeSlice, Navigation, Phone } from "lucide-react";
+import { TransitionLink } from "@/components/animations/PageTransition";
 import { mapsDirectionsUrl, telHref } from "@/lib/site.config";
 
 const item =
@@ -28,10 +28,10 @@ export function MobileActionBar() {
           Appeler
         </a>
         {!onOrderPage && (
-          <Link href="/gateaux-sur-mesure" aria-label="Commander un gâteau" className={`${item} rounded-[2px] bg-blue text-ivory`}>
+          <TransitionLink href="/gateaux-sur-mesure" aria-label="Commander un gâteau" className={`${item} rounded-[2px] bg-blue text-ivory`}>
             <CakeSlice className="size-[18px]" aria-hidden="true" />
             Commander
-          </Link>
+          </TransitionLink>
         )}
       </div>
     </nav>

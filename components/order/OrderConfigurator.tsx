@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -22,6 +21,8 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+import { TransitionLink } from "@/components/animations/PageTransition";
+import { getLenis } from "@/components/animations/SmoothScroll";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { images } from "@/data/images";
 import { inspirations, occasions } from "@/data/order";
@@ -119,7 +120,9 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
     const el = top.current;
     if (el) {
       const y = el.getBoundingClientRect().top + window.scrollY - 110;
-      window.scrollTo({ top: y, behavior: "smooth" });
+      const lenis = getLenis();
+      if (lenis) lenis.scrollTo(y, { duration: 0.9 });
+      else window.scrollTo({ top: y, behavior: "smooth" });
     }
     heading.current?.focus({ preventScroll: true });
   }, [step, status]);
@@ -389,6 +392,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                                 fill
                                 sizes="(min-width: 1024px) 30vw, 45vw"
                                 placeholder="blur"
+                                style={{ objectPosition: images[insp.image].focus ?? "50% 50%" }}
                                 className={cn("object-cover transition-transform duration-[1.2s] ease-[var(--ease-luxe)]", on ? "scale-[1.04]" : "group-hover:scale-[1.03]")}
                               />
                             ) : (
@@ -543,9 +547,9 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                       <span className="text-[0.95rem] leading-relaxed text-ink/85">
                         J’accepte que mes coordonnées soient utilisées par {siteConfig.name} pour traiter ma demande et me
                         recontacter à son sujet. Elles ne servent à rien d’autre.{" "}
-                        <Link href="/confidentialite" className="text-blue underline underline-offset-2">
+                        <TransitionLink href="/confidentialite" className="text-blue underline underline-offset-2">
                           Politique de confidentialité
-                        </Link>
+                        </TransitionLink>
                       </span>
                     </label>
                     <FieldError id="consent-error" message={errors.consent?.message} />

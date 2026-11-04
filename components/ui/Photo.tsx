@@ -12,6 +12,7 @@ export function Photo({
   className,
   imgClassName,
   preload = false,
+  parallax = false,
   focus,
   contain = false,
 }: {
@@ -21,12 +22,14 @@ export function Photo({
   imgClassName?: string;
   /** À réserver à l'image principale de la page (LCP). */
   preload?: boolean;
+  /** Ajoute data-parallax (utilisé par RevealImage). */
+  parallax?: boolean;
   focus?: string;
   contain?: boolean;
 }) {
   const img = images[name];
   return (
-    <div className={cn("absolute inset-0", className)}>
+    <div className={cn("absolute inset-0", parallax && "-inset-y-[8%]", className)} data-parallax={parallax || undefined}>
       <Image
         src={img.src}
         alt={img.alt}

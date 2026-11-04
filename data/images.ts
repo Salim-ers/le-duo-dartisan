@@ -1,8 +1,13 @@
 /**
  * Registre des photographies du site.
+ *
+ * Règle : chaque photo n'apparaît qu'à UN seul endroit du site, sans photos qui se ressemblent.
  * - source "client" : photos fournies par la boulangerie (les produits vendus).
- * - source "stock" : photos d'ambiance libres de droit (CC0), jamais présentées
- *   comme des produits de la boutique. Leurs crédits s'affichent dans les mentions légales.
+ *   Réservées au catalogue, aux inspirations du formulaire et à « Nous trouver ».
+ * - source "stock" : photos libres de droit (licence Unsplash). Leurs crédits
+ *   s'affichent dans les mentions légales. Celles qui montrent un produit portent
+ *   la mention « Photo d'illustration ».
+ *
  * Pour remplacer une photo : déposer le nouveau fichier dans public/images/
  * au même chemin, ou modifier l'import ci-dessous.
  *
@@ -23,22 +28,20 @@ import salades from "@/public/images/snacking/salades.webp";
 import sandwichs from "@/public/images/snacking/sandwichs.webp";
 import flansIndividuels from "@/public/images/patisseries/flans-individuels.webp";
 import entremetsFruits from "@/public/images/patisseries/entremets-fruits.webp";
-import petrissage from "@/public/images/fabrication/petrissage.webp";
-import vitrineFlans from "@/public/images/vitrine/vitrine-flans-macarons.webp";
-import vitrineTartes from "@/public/images/vitrine/vitrine-tartes.webp";
-import vitrineEclairs from "@/public/images/vitrine/vitrine-eclairs.webp";
 import vitrinePatisseries from "@/public/images/vitrine/vitrine-patisseries.webp";
-import dReligieuses from "@/public/images/details/religieuses.webp";
-import dEclairsChocolat from "@/public/images/details/eclairs-chocolat.webp";
-import dTartelettesMeringuees from "@/public/images/details/tartelettes-meringuees.webp";
-import dEntremetsCitron from "@/public/images/details/entremets-citron.webp";
-import dFlanCoco from "@/public/images/details/flan-coco.webp";
-import dEclairsPistache from "@/public/images/details/eclairs-pistache.webp";
-import dTartelettesFruitsRouges from "@/public/images/details/tartelettes-fruits-rouges.webp";
-import champDeBle from "@/public/images/ambiance/champ-de-ble.webp";
-import episDeBle from "@/public/images/ambiance/epis-de-ble.webp";
-import patonsFarine from "@/public/images/ambiance/patons-farine.webp";
-import croissants from "@/public/images/ambiance/croissants.webp";
+import farineSurPain from "@/public/images/ambiance/farine-sur-pain.webp";
+import baguetteFondNoir from "@/public/images/ambiance/baguette-fond-noir.webp";
+import croissantsFondNoir from "@/public/images/ambiance/croissants-fond-noir.webp";
+import tarteletteFramboises from "@/public/images/ambiance/tartelette-framboises.webp";
+import sandwichBaguette from "@/public/images/ambiance/sandwich-baguette.webp";
+import champDeBleCouchant from "@/public/images/ambiance/champ-de-ble-couchant.webp";
+import gateauFruitsRouges from "@/public/images/ambiance/gateau-fruits-rouges.webp";
+import gateauFleursBlanches from "@/public/images/ambiance/gateau-fleurs-blanches.webp";
+import bolDeFarine from "@/public/images/ambiance/bol-de-farine.webp";
+import petrissageMains from "@/public/images/ambiance/petrissage-mains.webp";
+import painsDeSeigle from "@/public/images/ambiance/pains-de-seigle.webp";
+import pateFarineFondNoir from "@/public/images/ambiance/pate-farine-fond-noir.webp";
+import dressageFraises from "@/public/images/ambiance/dressage-fraises.webp";
 
 export type SiteImage = {
   src: StaticImageData;
@@ -57,20 +60,23 @@ const client = (src: StaticImageData, alt: string, focus?: string): SiteImage =>
   source: "client",
 });
 
-const stock = (src: StaticImageData, alt: string, author: string, url: string, focus?: string): SiteImage => ({
+const stock = (src: StaticImageData, alt: string, author: string, id: string, focus?: string): SiteImage => ({
   src,
   alt,
   focus,
   source: "stock",
-  credit: { author, url },
+  credit: { author, url: `https://unsplash.com/photos/${id}` },
 });
 
 export const images = {
+  // Nous trouver
   facade: client(
     facade,
     "Façade bleue de la boulangerie Le Duo d'Artisans, enseigne manuscrite blanche, rue Anatole France à Rantigny",
     "50% 40%",
   ),
+
+  // Nos créations
   baguettesAlignees: client(
     baguettesAlignees,
     "Baguettes dorées aux grignes marquées, alignées sur un plan de travail clair",
@@ -79,14 +85,6 @@ export const images = {
     baguettesCroisees,
     "Deux baguettes croustillantes croisées, croûte farinée et mie alvéolée",
     "55% 50%",
-  ),
-  fraisier: client(
-    fraisier,
-    "Grand fraisier rectangulaire bordé de fraises, garni de fruits frais et de feuilles en chocolat",
-  ),
-  numberCake: client(
-    numberCake,
-    "Number cake « 30 » garni de crème, de roses, de macarons, de framboises et de cœurs roses",
   ),
   painsChocolat: client(
     painsChocolat,
@@ -117,67 +115,110 @@ export const images = {
     entremetsFruits,
     "Pâtisseries individuelles en trompe-l'œil, en forme de citron et de framboise",
   ),
-  petrissage: client(
-    petrissage,
-    "Pâte lisse et brillante en cours de pétrissage dans la cuve d'un batteur",
+
+  // Gâteaux sur mesure : inspirations du formulaire
+  fraisier: client(
+    fraisier,
+    "Grand fraisier rectangulaire bordé de fraises, garni de fruits frais et de feuilles en chocolat",
   ),
-  vitrineFlans: client(
-    vitrineFlans,
-    "Vitrine de la boutique : flans entiers, coffrets de macarons, tartelettes, religieuses et éclairs",
-    "50% 60%",
-  ),
-  vitrineTartes: client(
-    vitrineTartes,
-    "Vitrine de la boutique : tartes aux fruits, meringues et pâtisseries individuelles",
-  ),
-  vitrineEclairs: client(
-    vitrineEclairs,
-    "Vitrine de la boutique : éclairs, tartelettes aux fraises, choux et flans",
+  numberCake: client(
+    numberCake,
+    "Number cake « 30 » garni de crème, de roses, de macarons, de framboises et de cœurs roses",
   ),
   vitrinePatisseries: client(
     vitrinePatisseries,
-    "Vitrine de pâtisseries colorées : macarons, tartelettes citron meringuées, éclairs et entremets",
+    "Assortiment de pâtisseries individuelles en vitrine : macarons, tartelettes citron meringuées, éclairs et entremets",
     "45% 60%",
   ),
-  // Détails recadrés dans les vitrines (résolution limitée : affichage en petit format)
-  detailReligieuses: client(dReligieuses, "Religieuses en vitrine"),
-  detailEclairsChocolat: client(dEclairsChocolat, "Éclairs enrobés de chocolat en vitrine"),
-  detailTartelettesMeringuees: client(
-    dTartelettesMeringuees,
-    "Tartelettes meringuées et éclairs en vitrine",
+
+  // Accueil
+  farineSurPain: stock(
+    farineSurPain,
+    "Mains saupoudrant un nuage de farine au-dessus d'un pain rustique, sur fond noir",
+    "Tetiana Padurets",
+    "I5G_suhoqBQ",
+    "50% 40%",
   ),
-  detailEntremetsCitron: client(dEntremetsCitron, "Parts d'entremets au glaçage jaune et framboise"),
-  detailFlanCoco: client(dFlanCoco, "Grand flan coco découpé en parts"),
-  detailEclairsPistache: client(dEclairsPistache, "Éclairs au glaçage jaune et pistache"),
-  detailTartelettesFruitsRouges: client(
-    dTartelettesFruitsRouges,
-    "Tartelettes aux fraises et framboises, crème fouettée",
+  baguetteFondNoir: stock(
+    baguetteFondNoir,
+    "Baguette dorée et farinée sur un plan de travail noir",
+    "Ilham Putra",
+    "dY8F7ZlZvYU",
   ),
-  // Photographies d'ambiance libres de droit (CC0, WordPress Photo Directory)
-  champDeBle: stock(
-    champDeBle,
-    "Champ de blé doré ondulant sous un grand soleil",
-    "Chuck Grimmett",
-    "https://wordpress.org/photos/photo/27461ffbf8/",
-    "50% 70%",
+  croissantsFondNoir: stock(
+    croissantsFondNoir,
+    "Croissants dorés saupoudrés de sucre glace, sur fond sombre",
+    "Mae Mu",
+    "m9pzwmxm2rk",
   ),
-  episDeBle: stock(
-    episDeBle,
-    "Épis de blé mûrs en gros plan sur fond de ciel bleu",
-    "Jennifer Bourn",
-    "https://wordpress.org/photos/photo/343637b078/",
+  tarteletteFramboises: stock(
+    tarteletteFramboises,
+    "Tartelette aux framboises fraîches sur un plateau de bois, fond sombre",
+    "Jordane Mathieu",
+    "83sgp9jxW8k",
   ),
-  patonsFarine: stock(
-    patonsFarine,
-    "Pâtons ronds alignés sur un plan de travail fariné, à côté d'un rouleau à pâtisserie",
-    "Tawhid Sadman",
-    "https://wordpress.org/photos/photo/99169d2662/",
+  sandwichBaguette: stock(
+    sandwichBaguette,
+    "Sandwich baguette au jambon et au fromage en gros plan",
+    "petradr",
+    "eQqY_KQOqEE",
   ),
-  croissants: stock(
-    croissants,
-    "Croissants et viennoiseries dorés au feuilletage bien marqué",
-    "Reyes Martínez",
-    "https://wordpress.org/photos/photo/210622cf27/",
+  champDeBleCouchant: stock(
+    champDeBleCouchant,
+    "Champ de blé doré au soleil couchant, sous un ciel orangé",
+    "heino eisner",
+    "y6dUxc66kAs",
+    "50% 62%",
+  ),
+  gateauFruitsRouges: stock(
+    gateauFruitsRouges,
+    "Gâteau blanc à étages couronné de fruits rouges poudrés de sucre glace",
+    "Alexandra Gornago",
+    "_B7shfNUXEA",
+  ),
+
+  // Gâteaux sur mesure : en-tête
+  gateauFleursBlanches: stock(
+    gateauFleursBlanches,
+    "Grand gâteau blanc à étages orné de roses blanches et de feuillage",
+    "Denio Rodríguez",
+    "HBETvpRcRgA",
+    "50% 45%",
+  ),
+
+  // Notre maison
+  bolDeFarine: stock(
+    bolDeFarine,
+    "Bol noir rempli de farine, entouré d'épis de blé, sur fond noir",
+    "Roman Matveev",
+    "quVArOn8-30",
+    "50% 58%",
+  ),
+  petrissageMains: stock(
+    petrissageMains,
+    "Mains pétrissant une pâte sur un plan de travail en bois fariné",
+    "DDP",
+    "5CRzqqWzEKQ",
+  ),
+  painsDeSeigle: stock(
+    painsDeSeigle,
+    "Pains au levain à la croûte craquelée, l'un d'eux coupé en deux",
+    "DDP",
+    "QnQSxrXFgnw",
+  ),
+  pateFarineFondNoir: stock(
+    pateFarineFondNoir,
+    "Boule de pâte entourée de farine dispersée, vue du dessus sur fond noir",
+    "Patrick Fore",
+    "m9qWesqRN0M",
+    "82% 50%",
+  ),
+  dressageFraises: stock(
+    dressageFraises,
+    "Mains gantées déposant des fraises et des myrtilles sur des pâtisseries alignées",
+    "Toa Heftiba",
+    "xNV90NpObDQ",
+    "60% 50%",
   ),
 } satisfies Record<string, SiteImage>;
 

@@ -1,8 +1,8 @@
 import { Suspense } from "react";
+import { RevealImage, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { OrderConfigurator, OrderConfiguratorFromUrl } from "@/components/order/OrderConfigurator";
 import { Photo } from "@/components/ui/Photo";
-import { Reveal } from "@/components/ui/Reveal";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig, telHref } from "@/lib/site.config";
 
@@ -24,15 +24,17 @@ export default function CustomCakePage() {
     <>
       <header className="relative overflow-hidden">
         <div className="container-x grid gap-12 pb-16 pt-10 lg:grid-cols-12 lg:gap-8 lg:pb-24 lg:pt-16">
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-7">
             <Breadcrumbs items={[{ name: "Gâteaux sur mesure", path: "/gateaux-sur-mesure" }]} />
             <p className="mt-12 font-script text-[2rem] leading-none text-blue">Sur mesure</p>
-            <h1 className="t-h1 mt-5 max-w-[13ch] text-blue-deep">Votre gâteau, imaginé avec vous.</h1>
+            <SplitReveal as="h1" onStage className="t-h1 mt-5 max-w-[13ch] text-blue-deep">
+              Votre gâteau, imaginé avec vous.
+            </SplitReveal>
             <p className="t-lead mt-8 max-w-lg text-ink/80">
               Anniversaire, mariage, baptême ou réception : décrivez-nous votre projet en quelques minutes. La boutique
               vous rappelle pour en parler et confirmer chaque détail.
             </p>
-            <ol className="mt-12 grid gap-6 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+            <ol className="mt-12 grid gap-6 sm:grid-cols-3">
               {process.map((p, i) => (
                 <li key={p.title} className="border-t border-blue-deep/20 pt-4">
                   <span className="text-xs font-semibold tabular-nums text-champagne-deep">{i + 1}</span>
@@ -42,14 +44,12 @@ export default function CustomCakePage() {
               ))}
             </ol>
           </div>
-          <div className="relative min-h-[440px] lg:col-span-6 lg:min-h-[640px]">
-            <Reveal className="absolute right-0 top-0 aspect-[4/5] w-[78%] rounded-t-[999px] bg-paper">
-              <Photo name="numberCake" sizes="(min-width: 1024px) 38vw, 75vw" preload />
-            </Reveal>
-            <Reveal className="absolute bottom-0 left-0 aspect-square w-[44%] border-[6px] border-cream bg-paper">
-              <Photo name="fraisier" sizes="(min-width: 1024px) 20vw, 42vw" />
-            </Reveal>
-          </div>
+          <figure className="lg:col-span-4 lg:col-start-9">
+            <RevealImage kind="arch" parallax={4} className="mx-auto aspect-[4/5] w-full max-w-md rounded-t-[999px] bg-paper">
+              <Photo name="gateauFleursBlanches" sizes="(min-width: 1024px) 32vw, 90vw" parallax preload />
+            </RevealImage>
+            <figcaption className="t-small mt-2 text-center text-mute">Photo d’illustration</figcaption>
+          </figure>
         </div>
       </header>
 

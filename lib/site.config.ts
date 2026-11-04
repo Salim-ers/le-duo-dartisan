@@ -123,8 +123,6 @@ export const siteConfig = {
   catalogue: {
     /** Afficher les prix si renseignés dans data/products.ts. */
     showPrices: true,
-    /** Afficher la bande « aperçus de vitrine » sur la page Nos créations. */
-    showShowcaseDetails: true,
   },
 
   /**

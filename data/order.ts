@@ -41,7 +41,7 @@ export const inspirations: {
     id: "assortiment",
     label: "Pâtisseries individuelles",
     description: "Un assortiment pour un buffet ou une réception",
-    image: "entremetsFruits",
+    image: "vitrinePatisseries",
     defaultType: "Assortiment de pâtisseries individuelles",
   },
   {

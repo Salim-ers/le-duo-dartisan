@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/animations/PageTransition";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 import { JsonLd } from "./JsonLd";
@@ -19,9 +19,9 @@ export function Breadcrumbs({
       <nav aria-label="Fil d'Ariane" className={cn("t-small", className)}>
         <ol className={cn("flex flex-wrap items-center gap-2", tone === "dark" ? "text-mute" : "text-ivory/75")}>
           <li>
-            <Link href="/" className="link-draw">
+            <TransitionLink href="/" className="link-draw">
               Accueil
-            </Link>
+            </TransitionLink>
           </li>
           {items.map((it, i) => (
             <li key={it.path} className="flex items-center gap-2">
@@ -31,9 +31,9 @@ export function Breadcrumbs({
                   {it.name}
                 </span>
               ) : (
-                <Link href={it.path} className="link-draw">
+                <TransitionLink href={it.path} className="link-draw">
                   {it.name}
-                </Link>
+                </TransitionLink>
               )}
             </li>
           ))}

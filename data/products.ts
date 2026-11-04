@@ -8,6 +8,8 @@
  * - price : laisser `null` tant qu'un tarif n'est pas confirmé (aucun faux prix).
  * - allergens : renseigner UNIQUEMENT des allergènes confirmés par la boulangerie.
  * - customizable : affiche le bouton « Demander cette création ».
+ *
+ * Les gâteaux sur mesure ne sont pas ici : ils ont leur propre page (data/order.ts).
  */
 import { images, type ImageKey } from "./images";
 
@@ -15,7 +17,6 @@ export type CategoryId =
   | "pains"
   | "viennoiseries"
   | "patisseries"
-  | "gateaux"
   | "gourmandises"
   | "snacking";
 
@@ -23,7 +24,6 @@ export const categories: { id: CategoryId; label: string; short: string }[] = [
   { id: "pains", label: "Pains", short: "Pains" },
   { id: "viennoiseries", label: "Viennoiseries", short: "Viennoiseries" },
   { id: "patisseries", label: "Pâtisseries individuelles", short: "Pâtisseries" },
-  { id: "gateaux", label: "Gâteaux & créations à partager", short: "Gâteaux" },
   { id: "gourmandises", label: "Macarons & gourmandises", short: "Gourmandises" },
   { id: "snacking", label: "Snacking & salades", short: "Snacking" },
 ];
@@ -107,32 +107,6 @@ export const products: Product[] = [
     toConfirm: true,
   },
   {
-    id: "grand-fraisier",
-    name: "Le grand fraisier aux fruits",
-    category: "gateaux",
-    description:
-      "Bordé de fraises, couronné de fruits frais et de feuilles en chocolat : un gâteau à partager pour les grandes tablées.",
-    image: "fraisier",
-    price: null,
-    availability: "Sur demande",
-    allergens: [],
-    customizable: true,
-    toConfirm: true,
-  },
-  {
-    id: "number-cake",
-    name: "Le number cake",
-    category: "gateaux",
-    description:
-      "Le chiffre ou la lettre de votre choix, garni de crème et décoré de fleurs, de macarons et de fruits rouges.",
-    image: "numberCake",
-    price: null,
-    availability: "Sur commande",
-    allergens: [],
-    customizable: true,
-    toConfirm: true,
-  },
-  {
     id: "macarons-framboise",
     name: "Les grands macarons aux framboises",
     category: "gourmandises",
@@ -181,20 +155,6 @@ export const products: Product[] = [
     customizable: false,
     toConfirm: true,
   },
-];
-
-/**
- * Aperçus recadrés dans les photos de vitrine. Résolution limitée :
- * affichés en petit format avec la mention « l'assortiment varie ».
- */
-export const showcaseDetails: { name: string; image: ImageKey }[] = [
-  { name: "Religieuses", image: "detailReligieuses" },
-  { name: "Éclairs", image: "detailEclairsPistache" },
-  { name: "Tartelettes aux fruits rouges", image: "detailTartelettesFruitsRouges" },
-  { name: "Tartelettes meringuées", image: "detailTartelettesMeringuees" },
-  { name: "Entremets en parts", image: "detailEntremetsCitron" },
-  { name: "Éclairs au chocolat", image: "detailEclairsChocolat" },
-  { name: "Flans à partager", image: "detailFlanCoco" },
 ];
 
 export function productImage(p: Product) {

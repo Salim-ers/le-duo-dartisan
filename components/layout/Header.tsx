@@ -2,22 +2,26 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "motion/react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Phone } from "lucide-react";
+import { TransitionLink } from "@/components/animations/PageTransition";
 import { ButtonLink } from "@/components/ui/Button";
 import { fullAddress, navigation, siteConfig, telHref } from "@/lib/site.config";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+/** En dessous de cette position, l'en-tête de l'accueil reste transparent sur la photo. */
+const HERO_ZONE = 200;
 
 export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [inHeroZone, setInHeroZone] = useState(true);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
+  const overHero = pathname === "/" && inHeroZone;
 
   useEffect(() => {
     let last = window.scrollY;
@@ -26,6 +30,7 @@ export function Header() {
       frame = 0;
       const y = window.scrollY;
       setScrolled(y > 12);
+      setInHeroZone(y < HERO_ZONE);
       if (Math.abs(y - last) > 6) {
         setHidden(y > last && y > 240);
         last = y;
@@ -62,13 +67,21 @@ export function Header() {
           // right-scroll-bar-position : évite que l'en-tête saute quand une fenêtre verrouille le défilement.
           "right-scroll-bar-position fixed inset-x-0 top-0 z-[60] transition-[transform,background-color,box-shadow] duration-500 ease-[var(--ease-luxe)]",
           hidden && !open ? "-translate-y-full" : "translate-y-0",
-          scrolled ? "bg-cream/88 shadow-[0_1px_0_rgb(18_61_88/0.08)] backdrop-blur-md" : "bg-cream",
+          overHero
+            ? "on-dark bg-transparent"
+            : scrolled
+              ? "bg-cream/88 shadow-[0_1px_0_rgb(18_61_88/0.08)] backdrop-blur-md"
+              : "bg-cream",
         )}
       >
         <div className="container-x flex h-[var(--header-h)] items-center justify-between gap-6">
-          <Link href="/" className="relative z-[2] shrink-0 text-blue" aria-label={`${siteConfig.name}, accueil`}>
+          <TransitionLink
+            href="/"
+            className={cn("relative z-[2] shrink-0 transition-colors duration-500", overHero ? "text-ivory" : "text-blue")}
+            aria-label={`${siteConfig.name}, accueil`}
+          >
             <Logo className="w-[150px] sm:w-[172px] lg:w-[196px]" title="" />
-          </Link>
+          </TransitionLink>
 
           <nav aria-label="Navigation principale" className="hidden lg:block">
             <ul className="flex items-center gap-5 whitespace-nowrap xl:gap-9">
@@ -76,16 +89,20 @@ export function Header() {
                 const active = pathname.startsWith(item.href);
                 return (
                   <li key={item.href} className="relative">
-                    <Link
+                    <TransitionLink
                       href={item.href}
                       aria-current={active ? "page" : undefined}
                       className={cn(
                         "py-2 text-[0.95rem] font-medium transition-colors duration-300",
-                        active ? "text-blue-deep" : "text-ink/70 hover:text-blue-deep",
+                        overHero
+                          ? "text-ivory/85 hover:text-ivory"
+                          : active
+                            ? "text-blue-deep"
+                            : "text-ink/70 hover:text-blue-deep",
                       )}
                     >
                       {item.label}
-                    </Link>
+                    </TransitionLink>
                     {active && (
                       <motion.span
                         layoutId="nav-underline"
@@ -102,18 +119,28 @@ export function Header() {
           <div className="flex items-center gap-2 sm:gap-4">
             <a
               href={telHref}
-              className="hidden items-center gap-2 text-[0.95rem] font-medium text-blue-deep xl:flex link-draw"
+              className={cn(
+                "hidden items-center gap-2 text-[0.95rem] font-medium transition-colors duration-500 xl:flex link-draw",
+                overHero ? "text-ivory" : "text-blue-deep",
+              )}
             >
               <Phone className="size-4" aria-hidden="true" />
               {siteConfig.phone.display}
             </a>
-            <ButtonLink href="/gateaux-sur-mesure" className="hidden min-h-11 whitespace-nowrap px-5 sm:inline-flex">
+            <ButtonLink
+              href="/gateaux-sur-mesure"
+              variant={overHero ? "light" : "primary"}
+              className="hidden min-h-11 whitespace-nowrap px-5 sm:inline-flex"
+            >
               Commander un gâteau
             </ButtonLink>
 
             <Dialog.Root open={open} onOpenChange={setOpen}>
               <Dialog.Trigger
-                className="relative z-[2] flex min-h-11 items-center gap-3 px-1 text-[0.95rem] font-semibold text-blue-deep lg:hidden"
+                className={cn(
+                  "relative z-[2] flex min-h-11 items-center gap-3 px-1 text-[0.95rem] font-semibold transition-colors duration-500 lg:hidden",
+                  overHero ? "text-ivory" : "text-blue-deep",
+                )}
                 aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
               >
                 <span>{open ? "Fermer" : "Menu"}</span>
@@ -145,9 +172,9 @@ export function Header() {
                       >
                         <Dialog.Title className="sr-only">Menu</Dialog.Title>
                         <div className="container-x flex h-[var(--header-h)] items-center justify-between">
-                          <Link href="/" className="text-ivory" onClick={() => setOpen(false)}>
+                          <TransitionLink href="/" className="text-ivory" onClick={() => setOpen(false)}>
                             <Logo className="w-[150px] sm:w-[172px]" />
-                          </Link>
+                          </TransitionLink>
                           <Dialog.Close className="flex min-h-11 items-center gap-3 px-1 text-[0.95rem] font-semibold">
                             Fermer
                             <span className="relative block h-3 w-6" aria-hidden="true">
@@ -166,7 +193,7 @@ export function Header() {
                                   exit={{ y: "105%", transition: { duration: 0.3 } }}
                                   transition={{ duration: 0.8, delay: 0.25 + i * 0.06, ease }}
                                 >
-                                  <Link
+                                  <TransitionLink
                                     href={item.href}
                                     onClick={() => setOpen(false)}
                                     aria-current={pathname === item.href ? "page" : undefined}
@@ -176,7 +203,7 @@ export function Header() {
                                       {String(i + 1).padStart(2, "0")}
                                     </span>
                                     {item.label}
-                                  </Link>
+                                  </TransitionLink>
                                 </motion.div>
                               </li>
                             ))}

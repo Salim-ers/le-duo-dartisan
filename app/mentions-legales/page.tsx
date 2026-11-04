@@ -75,7 +75,7 @@ export default function LegalNoticePage() {
       <h2>Propriété intellectuelle</h2>
       <p>
         Les photographies, le logo, les textes et la mise en page de ce site sont la propriété de {siteConfig.name} ou
-        sont utilisés avec son autorisation, à l’exception des photographies d’ambiance libres de droit créditées
+        sont utilisés avec son autorisation, à l’exception des photographies d’illustration libres de droit créditées
         ci-dessous. Toute reproduction, même partielle, des éléments appartenant à {siteConfig.name} est soumise à
         autorisation préalable.
       </p>
@@ -86,8 +86,11 @@ export default function LegalNoticePage() {
         les saisons.
       </p>
       <p>
-        Photographies d’ambiance (licence CC0, sans lien avec les produits de la boutique), issues du WordPress Photo
-        Directory :
+        Photographies d’illustration, sans lien avec les produits de la boutique, issues d’Unsplash sous{" "}
+        <a href="https://unsplash.com/license" target="_blank" rel="noopener noreferrer">
+          licence Unsplash
+        </a>{" "}
+        :
       </p>
       <ul>
         {stockPhotos.map((p) => (
