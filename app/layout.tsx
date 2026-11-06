@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/cormorant/wght.css";
-import "@fontsource-variable/cormorant/wght-italic.css";
+import "@fontsource-variable/fraunces/soft.css";
+import "@fontsource-variable/fraunces/soft-italic.css";
 import "@fontsource-variable/manrope/wght.css";
-import "@fontsource/damion/400.css";
 import "@/styles/globals.css";
 
 import { IntroLoader, introGuardScript } from "@/components/animations/IntroLoader";
@@ -34,7 +33,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f8f6f1",
+  themeColor: "#fbf6ee",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -49,7 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:bg-blue-deep focus:px-4 focus:py-3 focus:text-ivory"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-blue-deep focus:px-5 focus:py-3 focus:text-ivory"
         >
           Aller au contenu
         </a>

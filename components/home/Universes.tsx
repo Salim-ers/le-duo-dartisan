@@ -1,51 +1,101 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
-import { useRef, type CSSProperties } from "react";
+import { ArrowRight } from "lucide-react";
+import { useRef } from "react";
 import { TransitionLink } from "@/components/animations/PageTransition";
-import { RevealImage, SplitReveal } from "@/components/animations/Reveal";
+import { SplitReveal } from "@/components/animations/Reveal";
+import { Chip } from "@/components/ui/Decor";
 import { Photo } from "@/components/ui/Photo";
 import type { ImageKey } from "@/data/images";
 import { gsap, MQ, useGSAP } from "@/lib/gsap";
+import { cn } from "@/lib/utils";
 
-const universes: { n: string; title: string; text: string; image: ImageKey; href: string; kind: "up" | "down" | "circle" | "left" }[] = [
-  { n: "01", title: "Les pains", text: "Baguettes, pains traditionnels et spécialités boulangères.", image: "baguetteFondNoir", href: "/nos-creations?categorie=pains", kind: "up" },
-  { n: "02", title: "Les viennoiseries", text: "Croissants, pains au chocolat et gourmandises du matin.", image: "croissantsFondNoir", href: "/nos-creations?categorie=viennoiseries", kind: "circle" },
-  { n: "03", title: "Les pâtisseries", text: "Entremets, tartes, flans, créations fruitées et chocolat.", image: "tarteletteFramboises", href: "/nos-creations?categorie=patisseries", kind: "down" },
-  { n: "04", title: "La pause gourmande", text: "Sandwichs, salades et préparations salées.", image: "sandwichBaguette", href: "/nos-creations?categorie=snacking", kind: "left" },
+const universes: {
+  n: string;
+  title: string;
+  text: string;
+  image: ImageKey;
+  href: string;
+  cta: string;
+  tone: string;
+  badge: string;
+}[] = [
+  {
+    n: "01",
+    title: "Les pains",
+    text: "Baguettes, pains traditionnels et spécialités boulangères, du matin au soir.",
+    image: "baguetteFondNoir",
+    href: "/nos-creations?categorie=pains",
+    cta: "Voir les pains",
+    tone: "bg-blue-soft",
+    badge: "bg-blue text-ivory",
+  },
+  {
+    n: "02",
+    title: "Les viennoiseries",
+    text: "Croissants, pains au chocolat et toutes les gourmandises du petit-déjeuner.",
+    image: "croissantsFondNoir",
+    href: "/nos-creations?categorie=viennoiseries",
+    cta: "Voir les viennoiseries",
+    tone: "bg-citron-soft",
+    badge: "bg-citron text-cacao",
+  },
+  {
+    n: "03",
+    title: "Les pâtisseries",
+    text: "Entremets, tartelettes, flans, macarons : des créations fruitées et chocolatées.",
+    image: "tarteletteFramboises",
+    href: "/nos-creations?categorie=patisseries",
+    cta: "Voir les pâtisseries",
+    tone: "bg-rose",
+    badge: "bg-framboise text-ivory",
+  },
+  {
+    n: "04",
+    title: "La pause gourmande",
+    text: "Sandwichs, salades composées et préparations salées pour le déjeuner.",
+    image: "sandwichBaguette",
+    href: "/nos-creations?categorie=snacking",
+    cta: "Voir le snacking",
+    tone: "bg-pistache-soft",
+    badge: "bg-pistache text-blue-night",
+  },
 ];
 
+/** Décalage vertical entre deux cartes empilées. */
+const STEP = 18;
+
 /**
- * Nos univers : galerie horizontale pilotée par le défilement sur desktop
- * (section collante, sans épinglage), balayage tactile sur mobile.
- * --track correspond à la largeur totale du rail : la hauteur est connue sans mesure, donc rien ne saute.
+ * Nos univers : quatre grandes cartes arrondies qui s'empilent au défilement
+ * (position: sticky, sans épinglage). La carte recouverte recule et s'assombrit.
+ * Sur les écrans trop bas, les cartes se suivent simplement.
  */
 export function Universes() {
   const root = useRef<HTMLElement>(null);
-  const track = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
+      const q = gsap.utils.selector(root);
       const mm = gsap.matchMedia();
-      mm.add(MQ.desktop, () => {
-        const el = track.current!;
-        const distance = () => el.scrollWidth - document.documentElement.clientWidth;
-        const trigger = { trigger: root.current, start: "top top", end: "bottom bottom", invalidateOnRefresh: true };
-        const move = gsap.to(el, { x: () => -distance(), ease: "none", scrollTrigger: { ...trigger, scrub: 0.8 } });
-        gsap.utils.toArray<HTMLElement>("[data-slide-img]", el).forEach((img) => {
-          gsap.fromTo(img, { xPercent: -7 }, { xPercent: 7, ease: "none", scrollTrigger: { ...trigger, scrub: true } });
+      mm.add(`${MQ.motion} and (min-height: 640px)`, () => {
+        const items = q<HTMLElement>("[data-stack-item]");
+        const headerH = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 80;
+        items.forEach((item, i) => {
+          const card = item.querySelector("[data-card]");
+          const img = item.querySelector("[data-card-img]");
+          gsap.fromTo(img, { yPercent: -6 }, { yPercent: 6, ease: "none", scrollTrigger: { trigger: item, start: "top bottom", end: "bottom top", scrub: true } });
+          const next = items[i + 1];
+          if (!next) return;
+          const scrollTrigger = {
+            trigger: next,
+            start: "top bottom",
+            end: () => `top ${headerH() + 16 + (i + 1) * STEP}px`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          };
+          gsap.fromTo(card, { scale: 1 }, { scale: 0.9 + i * 0.02, ease: "none", scrollTrigger });
+          gsap.fromTo(item.querySelector("[data-dim]"), { opacity: 0 }, { opacity: 1, ease: "none", scrollTrigger });
         });
-
-        // Au clavier, un lien hors écran ramène la galerie à lui.
-        const onFocus = (e: FocusEvent) => {
-          const panel = (e.target as HTMLElement).closest<HTMLElement>("[data-panel]");
-          const st = move.scrollTrigger;
-          if (!panel || !st) return;
-          const progress = Math.min(1, Math.max(0, (panel.offsetLeft - 48) / distance()));
-          window.scrollTo(0, st.start + (st.end - st.start) * progress);
-        };
-        el.addEventListener("focusin", onFocus);
-        return () => el.removeEventListener("focusin", onFocus);
       });
       return () => mm.revert();
     },
@@ -53,58 +103,73 @@ export function Universes() {
   );
 
   return (
-    <section
-      ref={root}
-      aria-labelledby="creations-titre"
-      style={{ "--track": "250vw" } as CSSProperties}
-      className="relative bg-ivory py-20 lg:motion-safe:h-[calc(100svh+var(--track)-100vw)] lg:motion-safe:py-0"
-    >
-      <div className="lg:motion-safe:sticky lg:motion-safe:top-0 lg:motion-safe:flex lg:motion-safe:h-svh lg:motion-safe:items-center lg:motion-safe:overflow-clip">
-        <div
-          ref={track}
-          className="scroll-row flex snap-x snap-mandatory items-center gap-4 overflow-x-auto px-[var(--gutter)] lg:gap-[3vw] lg:motion-safe:w-[var(--track)] lg:motion-safe:snap-none lg:motion-safe:overflow-visible lg:motion-safe:will-change-transform"
-        >
-          <div className="w-[78vw] max-w-sm shrink-0 snap-start lg:w-[28vw] lg:max-w-none">
-            <p className="font-script text-[1.9rem] leading-none text-blue">Nos créations</p>
-            <SplitReveal as="h2" id="creations-titre" className="t-h1 mt-5 text-blue-deep">
-              De quoi passer nous voir à toute heure.
-            </SplitReveal>
-            <p className="mt-6 max-w-xs text-ink/75">Du premier croissant au goûter, la vitrine se renouvelle au fil de la journée.</p>
-          </div>
+    <section ref={root} id="nos-univers" aria-labelledby="univers-titre" className="relative scroll-mt-8 bg-cream pb-20 pt-6 lg:pb-32">
+      <div className="container-x grid items-end gap-6 pb-10 lg:grid-cols-12 lg:pb-16">
+        <div className="lg:col-span-7">
+          <Chip dot="framboise">Nos univers</Chip>
+          <SplitReveal as="h2" id="univers-titre" className="t-h1 mt-5 max-w-[15ch] text-blue-deep">
+            De quoi passer nous voir à toute heure.
+          </SplitReveal>
+        </div>
+        <p className="t-lead max-w-md text-ink/75 lg:col-span-4 lg:col-start-9 lg:pb-2">
+          Du premier croissant au goûter, la vitrine se renouvelle au fil de la journée.
+        </p>
+      </div>
 
-          {universes.map((u) => (
-            <TransitionLink
-              key={u.n}
-              href={u.href}
-              data-panel
-              className="group relative block h-[62svh] w-[78vw] max-w-md shrink-0 snap-center lg:h-[76svh] lg:w-[44vw] lg:max-w-none"
+      <div className="container-x">
+        {universes.map((u, i) => (
+          <div
+            key={u.n}
+            data-stack-item
+            className={cn("[@media(min-height:640px)]:sticky", i < universes.length - 1 && "pb-[7vh]")}
+            style={{ top: `calc(var(--header-h) + 1rem + ${i * STEP}px)` }}
+          >
+            <article
+              data-card
+              className={cn(
+                "group relative grid origin-top overflow-hidden rounded-[2rem] p-2.5 shadow-[0_-12px_40px_-24px_rgb(18_61_88/0.35)] will-change-transform sm:rounded-[2.5rem] sm:p-3 lg:grid-cols-[1fr_1.08fr] lg:p-4",
+                u.tone,
+              )}
             >
-              <RevealImage kind={u.kind} className="absolute inset-0 bg-blue-night">
-                <div data-slide-img className="absolute -inset-x-[9%] inset-y-0">
+              <div className="order-2 flex flex-col justify-between gap-5 px-4 pb-4 pt-5 sm:p-8 lg:order-1 lg:gap-10 lg:p-12">
+                <span className={cn("hidden size-14 place-items-center rounded-full font-display text-xl font-medium lg:grid", u.badge)}>
+                  {u.n}
+                </span>
+                <div>
+                  <h3 className="flex items-center gap-3 font-display text-[clamp(2rem,5vw,5rem)] font-[430] leading-[1] tracking-[-0.03em] text-blue-deep [font-variation-settings:'SOFT'_100]">
+                    <span className={cn("grid size-9 shrink-0 place-items-center rounded-full font-sans text-xs font-bold lg:hidden", u.badge)}>{u.n}</span>
+                    {u.title}
+                  </h3>
+                  <p className="mt-3 max-w-sm text-ink/75 lg:t-lead lg:mt-5">{u.text}</p>
+                  <TransitionLink
+                    href={u.href}
+                    className="mt-5 inline-flex min-h-12 items-center gap-3 whitespace-nowrap rounded-full bg-blue-deep py-2 pl-5 pr-2 text-[0.92rem] font-semibold text-ivory sm:pl-6 sm:text-base transition-colors duration-500 after:absolute after:inset-0 hover:bg-blue lg:mt-8"
+                  >
+                    {u.cta}
+                    <span className="grid size-8 place-items-center rounded-full bg-ivory/15 transition-transform duration-500 ease-[var(--ease-spring)] group-hover:rotate-[-45deg]">
+                      <ArrowRight className="size-4" aria-hidden="true" />
+                    </span>
+                  </TransitionLink>
+                </div>
+              </div>
+
+              <div className="relative order-1 aspect-[16/10] overflow-hidden rounded-[1.6rem] bg-blue-night sm:aspect-[16/9] sm:rounded-[2rem] lg:order-2 lg:aspect-auto lg:min-h-[min(62svh,640px)]">
+                <div data-card-img className="absolute -inset-y-[8%] inset-x-0">
                   <Photo
                     name={u.image}
-                    sizes="(min-width: 1024px) 50vw, 84vw"
-                    imgClassName="transition-transform duration-[1.2s] ease-[var(--ease-luxe)] group-hover:scale-[1.04]"
+                    sizes="(min-width: 1024px) 50vw, 92vw"
+                    imgClassName="transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.05]"
                   />
                 </div>
-                <div aria-hidden="true" className="absolute inset-0 bg-[linear-gradient(180deg,rgb(6_5_4/0)_45%,rgb(6_5_4/0.82)_100%)]" />
-                <div className="on-dark absolute inset-x-0 bottom-0 p-6 text-ivory lg:p-10">
-                  <span className="text-xs font-semibold tabular-nums text-champagne">{u.n}</span>
-                  <h3 className="t-h1 mt-2 transition-transform duration-700 ease-[var(--ease-luxe)] group-hover:translate-x-2">{u.title}</h3>
-                  <p className="mt-3 max-w-sm text-[0.98rem] leading-relaxed text-ivory/85">{u.text}</p>
-                </div>
-              </RevealImage>
-            </TransitionLink>
-          ))}
+                <span className="absolute bottom-3 left-3 rounded-full bg-ivory/85 px-3 py-1 text-[0.72rem] font-semibold text-blue-deep backdrop-blur-sm">
+                  Photo d’illustration
+                </span>
+              </div>
 
-          <div className="w-[62vw] max-w-xs shrink-0 snap-center lg:w-[24vw] lg:max-w-none">
-            <TransitionLink href="/nos-creations" className="group inline-flex items-baseline gap-3 text-blue-deep">
-              <span className="t-h2 link-draw">Voir tout le catalogue</span>
-              <ArrowUpRight className="size-6 shrink-0 transition-transform duration-500 ease-[var(--ease-luxe)] group-hover:-translate-y-1 group-hover:translate-x-1" aria-hidden="true" />
-            </TransitionLink>
-            <p className="t-small mt-4 text-mute">Photos d’illustration. Nos créations réelles vous attendent au catalogue et en boutique.</p>
+              <div data-dim aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] bg-blue-night/10 opacity-0" />
+            </article>
           </div>
-        </div>
+        ))}
       </div>
     </section>
   );

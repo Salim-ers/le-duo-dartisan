@@ -34,6 +34,7 @@ const photos = {
 const crops = {
   "gateaux/fraisier-detail": ["21_35_16_4", [250, 300, 640, 800]],
   "gateaux/assortiment-detail": ["21_41_05_3", [150, 300, 416, 520]],
+  "gateaux/number-cake-detail": ["21_35_17_6", [560, 390, 640, 800]],
   "details/religieuses": ["21_41_05_1", [1090, 450, 210, 300]],
   "details/eclairs-chocolat": ["21_41_05_1", [1520, 520, 152, 300]],
   "details/tartelettes-meringuees": ["21_41_05_1", [620, 420, 280, 210]],

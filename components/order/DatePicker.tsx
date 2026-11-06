@@ -77,13 +77,13 @@ export function DatePicker({
   };
 
   return (
-    <div className={cn("border bg-ivory p-4 sm:p-6", invalid ? "border-[#b4432f]" : "border-line")}>
+    <div className={cn("rounded-[1.75rem] bg-cream p-3 ring-1 sm:p-5", invalid ? "ring-2 ring-[#b4432f]" : "ring-line")}>
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={() => go(-1)}
           disabled={!canPrev}
-          className="grid size-11 place-items-center rounded-full text-blue-deep transition hover:bg-paper disabled:opacity-25"
+          className="grid size-11 place-items-center rounded-full bg-ivory text-blue-deep shadow-[0_2px_8px_-4px_rgb(18_61_88/0.4)] transition hover:bg-blue-deep hover:text-ivory disabled:opacity-25 disabled:hover:bg-ivory disabled:hover:text-blue-deep"
           aria-label="Mois précédent"
         >
           <ChevronLeft className="size-5" />
@@ -95,7 +95,7 @@ export function DatePicker({
           type="button"
           onClick={() => go(1)}
           disabled={!canNext}
-          className="grid size-11 place-items-center rounded-full text-blue-deep transition hover:bg-paper disabled:opacity-25"
+          className="grid size-11 place-items-center rounded-full bg-ivory text-blue-deep shadow-[0_2px_8px_-4px_rgb(18_61_88/0.4)] transition hover:bg-blue-deep hover:text-ivory disabled:opacity-25 disabled:hover:bg-ivory disabled:hover:text-blue-deep"
           aria-label="Mois suivant"
         >
           <ChevronRight className="size-5" />
@@ -155,13 +155,13 @@ export function DatePicker({
                       ? "bg-blue-deep font-semibold text-ivory"
                       : disabled
                         ? "cursor-not-allowed text-ink/25 line-through decoration-ink/20"
-                        : "text-blue-deep hover:bg-blue-soft",
+                        : "bg-ivory/60 text-blue-deep hover:bg-blue-soft",
                   )}
                 >
                   {selected && (
                     <motion.span
                       layoutId="date-ring"
-                      className="absolute -inset-1 rounded-full border border-champagne"
+                      className="absolute -inset-1 rounded-full border-2 border-framboise"
                       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                     />
                   )}
@@ -173,7 +173,7 @@ export function DatePicker({
         </AnimatePresence>
       </div>
 
-      <p className="mt-4 border-t border-line pt-4 t-small text-mute">
+      <p className="mt-4 rounded-2xl bg-ivory p-4 t-small text-mute">
         {value ? (
           <>
             <span className="font-semibold text-blue-deep first-letter:uppercase">{formatLongDate(value)}</span>

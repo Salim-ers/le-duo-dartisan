@@ -3,8 +3,8 @@
  *
  * Règle : chaque photo n'apparaît qu'à UN seul endroit du site, sans photos qui se ressemblent.
  * - source "client" : photos fournies par la boulangerie (les produits vendus) :
- *   catalogue, inspirations du formulaire, « Nous trouver », vitrine de « Notre maison »
- *   et fraisier de l'accueil.
+ *   catalogue, inspirations du formulaire, « Nous trouver », vitrine de « Notre maison »,
+ *   et sur l'accueil le fraisier (titre), le number cake (sur mesure) et le pétrin (savoir-faire).
  * - source "stock" : photos libres de droit (licence Unsplash). Leurs crédits
  *   s'affichent dans les mentions légales. Celles qui montrent un produit portent
  *   la mention « Photo d'illustration ».
@@ -24,6 +24,8 @@ import fraisier from "@/public/images/gateaux/fraisier-fruits.webp";
 import fraisierDetail from "@/public/images/gateaux/fraisier-detail.webp";
 import assortimentDetail from "@/public/images/gateaux/assortiment-detail.webp";
 import numberCake from "@/public/images/gateaux/number-cake.webp";
+import numberCakeDetail from "@/public/images/gateaux/number-cake-detail.webp";
+import petrissage from "@/public/images/fabrication/petrissage.webp";
 import painsChocolat from "@/public/images/viennoiseries/pains-au-chocolat.webp";
 import cookies from "@/public/images/gourmandises/cookies-garnis.webp";
 import macaronsFramboise from "@/public/images/gourmandises/macarons-framboise.webp";
@@ -122,9 +124,9 @@ export const images = {
     fraisierDetail,
     "Gros plan sur un fraisier garni de fraises, de kiwis, de mûres et de feuilles en chocolat",
   ),
-  numberCake: client(
-    numberCake,
-    "Number cake « 30 » garni de crème, de roses, de macarons, de framboises et de cœurs roses",
+  numberCakeDetail: client(
+    numberCakeDetail,
+    "Gros plan sur un number cake : couronne de crème, roses, macarons, framboises et cœurs roses",
   ),
   assortimentDetail: client(
     assortimentDetail,
@@ -135,7 +137,13 @@ export const images = {
   fraisier: client(
     fraisier,
     "Grand fraisier rectangulaire bordé de fraises, garni de fruits frais et de feuilles en chocolat",
+    "50% 45%",
   ),
+  numberCake: client(
+    numberCake,
+    "Number cake « 30 » garni de crème, de roses, de macarons, de framboises et de cœurs roses",
+  ),
+  petrissage: client(petrissage, "Pâte lisse et brillante dans la cuve du pétrin, crochet en mouvement"),
   farineSurPain: stock(
     farineSurPain,
     "Mains saupoudrant un nuage de farine au-dessus d'un pain rustique, sur fond noir",

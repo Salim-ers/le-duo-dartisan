@@ -27,7 +27,7 @@ export const inspirations: {
     id: "number-cake",
     label: "Number cake",
     description: "Chiffres ou lettres garnis de crème, fleurs et macarons",
-    image: "numberCake",
+    image: "numberCakeDetail",
     defaultType: "Number cake",
   },
   {

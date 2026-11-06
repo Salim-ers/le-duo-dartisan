@@ -5,7 +5,7 @@ import { gsap, MQ, SplitText, useGSAP } from "@/lib/gsap";
 import { onStageReady } from "@/lib/stage";
 import { cn } from "@/lib/utils";
 
-type RevealKind = "up" | "down" | "left" | "right" | "circle" | "arch";
+type RevealKind = "up" | "left" | "right" | "pill" | "circle";
 
 /** Appelle `cb` une seule fois, quand l'élément entre à l'écran et que la scène est visible. */
 function onceInView(el: Element, cb: () => void) {
@@ -25,9 +25,10 @@ function onceInView(el: Element, cb: () => void) {
 }
 
 /**
- * Photographie révélée par masque à son entrée dans l'écran (transition CSS,
- * voir globals.css), avec parallaxe interne facultative au défilement.
+ * Photographie révélée par un masque aux coins arrondis à son entrée dans l'écran
+ * (transition CSS, voir globals.css), avec parallaxe interne facultative au défilement.
  * Le contenu à déplacer porte data-parallax (voir la prop `parallax` de Photo).
+ * `radius` doit correspondre à l'arrondi du cadre : le bord qui avance reste arrondi.
  */
 export function RevealImage({
   children,
@@ -35,6 +36,8 @@ export function RevealImage({
   kind = "up",
   parallax = 0,
   delay = 0,
+  radius = "1.75rem",
+  style,
 }: {
   children: ReactNode;
   className?: string;
@@ -42,6 +45,8 @@ export function RevealImage({
   /** Amplitude de la parallaxe interne, en % (0 = aucune). */
   parallax?: number;
   delay?: number;
+  radius?: string;
+  style?: CSSProperties;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -74,7 +79,7 @@ export function RevealImage({
     <div
       ref={ref}
       data-reveal={kind}
-      style={delay ? ({ "--reveal-delay": `${delay}s` } as CSSProperties) : undefined}
+      style={{ "--r": radius, ...(delay ? { "--reveal-delay": `${delay}s` } : {}), ...style } as CSSProperties}
       className={cn("relative overflow-hidden", className)}
     >
       {children}
@@ -138,6 +143,58 @@ export function SplitReveal({
 
   return (
     <Tag ref={ref} id={id} data-split="" className={className}>
+      {children}
+    </Tag>
+  );
+}
+
+/**
+ * Apparition douce (fondu + montée) à l'entrée dans l'écran.
+ * `stagger` : les enfants directs apparaissent l'un après l'autre.
+ */
+export function FadeIn({
+  as: Tag = "div",
+  children,
+  className,
+  delay = 0,
+  y = 28,
+  stagger = 0,
+  onStage = false,
+  id,
+}: {
+  as?: ElementType;
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  y?: number;
+  stagger?: number;
+  onStage?: boolean;
+  id?: string;
+}) {
+  const ref = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const el = ref.current!;
+      const mm = gsap.matchMedia();
+      mm.add(MQ.motion, () => {
+        const run = () => {
+          if (stagger) {
+            gsap.set(el, { opacity: 1 });
+            gsap.fromTo(el.children, { autoAlpha: 0, y }, { autoAlpha: 1, y: 0, duration: 1.1, ease: "expo.out", stagger, delay });
+          } else {
+            gsap.fromTo(el, { autoAlpha: 0, y }, { autoAlpha: 1, y: 0, duration: 1.1, ease: "expo.out", delay });
+          }
+        };
+        return onStage ? onStageReady(run) : onceInView(el, run);
+      });
+      return () => mm.revert();
+    },
+    { scope: ref },
+  );
+
+  return (
+    <Tag ref={ref} id={id} data-fade="" className={className}>
       {children}
     </Tag>
   );

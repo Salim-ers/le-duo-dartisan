@@ -1,17 +1,37 @@
 "use client";
 
-import { useRef } from "react";
-import { FlourDust } from "@/components/animations/FlourDust";
-import { SplitReveal } from "@/components/animations/Reveal";
+import { ArrowDown } from "lucide-react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 import { ButtonLink } from "@/components/ui/Button";
+import { Glow, Macaron, RotatingBadge, type Flavour } from "@/components/ui/Decor";
 import { Photo } from "@/components/ui/Photo";
 import { gsap, MQ, useGSAP } from "@/lib/gsap";
 import { onStageReady } from "@/lib/stage";
+import { cn } from "@/lib/utils";
+
+/** Macarons décoratifs : position, taille, profondeur de parallaxe, inclinaison. */
+const MACARONS: { flavour: Flavour; className: string; depth: number; rot: number; bob: string }[] = [
+  { flavour: "framboise", className: "left-[5%] top-[17%] w-[clamp(58px,7.5vw,128px)] lg:left-[8%] lg:top-[24%]", depth: 1.2, rot: -14, bob: "6.5s" },
+  { flavour: "pistache", className: "right-[5%] top-[21%] w-[clamp(50px,6.2vw,108px)] lg:right-[9%] lg:top-[30%]", depth: 0.8, rot: 12, bob: "7.2s" },
+  { flavour: "citron", className: "bottom-[19%] left-[8%] w-[clamp(44px,5vw,88px)] lg:bottom-[16%] lg:left-[15%]", depth: 1.6, rot: 9, bob: "5.8s" },
+  { flavour: "blue", className: "bottom-[24%] right-[9%] w-[clamp(38px,4.2vw,74px)] lg:bottom-auto lg:right-[27%] lg:top-[14%]", depth: 0.6, rot: -8, bob: "6.9s" },
+];
+
+function Word({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <span className="inline-block overflow-hidden pb-[0.1em] -mb-[0.1em] align-bottom">
+      <span data-word className={cn("inline-block will-change-transform", className)}>
+        {children}
+      </span>
+    </span>
+  );
+}
 
 /**
- * Ouverture : nuage de farine sur fond noir, poussière animée, titre ligne à ligne.
- * Au défilement (desktop), la photo se referme en arche, la forme d'une porte de
- * fournil, entre les deux moitiés de la devise.
+ * Ouverture : la devise de la maison en très grand, une photo sertie dans le titre
+ * comme un gâteau en vitrine, des macarons qui flottent.
+ * Desktop : au défilement, la pastille photo s'ouvre en une grande fenêtre arrondie
+ * pendant que le titre s'efface et que les macarons s'envolent.
  */
 export function HomeHero() {
   const root = useRef<HTMLDivElement>(null);
@@ -20,66 +40,135 @@ export function HomeHero() {
     () => {
       const q = gsap.utils.selector(root);
       const mm = gsap.matchMedia();
-      // Après l'intro, la photo est déjà entièrement visible à travers le logo.
-      const afterIntro = !document.documentElement.classList.contains("intro-done");
 
+      // Entrée, à toutes les tailles, dès que la page est visible (après l'intro ou le rideau).
       mm.add(MQ.motion, () => {
-        const breathing = gsap.to(q("[data-breathe]"), { scale: 1.07, duration: 16, ease: "sine.inOut", yoyo: true, repeat: -1 });
+        // Une transformation restée en ligne serait relue en pixels : on repart de zéro.
+        const words = q<HTMLElement>("[data-word]");
+        gsap.set(words, { clearProps: "transform" });
         const cancel = onStageReady(() => {
-          const tl = gsap.timeline();
-          if (!afterIntro) {
-            tl.fromTo(q("[data-frame]"), { clipPath: "inset(22% 16% 22% 16%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.7, ease: "expo.inOut" }).fromTo(
-              q("[data-img]"),
-              { scale: 1.28 },
-              { scale: 1, duration: 2.4, ease: "expo.out" },
-              0.2,
+          gsap.set(q("[data-split]"), { opacity: 1 });
+          const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
+          // Un fromTo par mot : dans une timeline, un fromTo décalé (stagger)
+          // n'appliquerait son état de départ qu'au premier élément.
+          words.forEach((w, i) => tl.fromTo(w, { yPercent: 118, rotate: 5 }, { yPercent: 0, rotate: 0, duration: 1.35 }, i * 0.075));
+          tl.fromTo(q("[data-pill]"), { scale: 0, rotate: -16 }, { scale: 1, rotate: 0, duration: 1.6, ease: "elastic.out(1, 0.65)" }, 0.3)
+            .fromTo(q("[data-pill-img]"), { scale: 1.6 }, { scale: 1, duration: 1.8 }, 0.3)
+            .fromTo(q("[data-fade]"), { autoAlpha: 0, y: 26 }, { autoAlpha: 1, y: 0, duration: 1.1, stagger: 0.08 }, 0.45)
+            .fromTo(
+              q("[data-pop]"),
+              { autoAlpha: 0, scale: 0.2, rotate: -40 },
+              { autoAlpha: 1, scale: 1, rotate: 0, duration: 1.3, stagger: 0.09, ease: "back.out(2.4)" },
+              0.55,
             );
-          }
-          tl.fromTo(
-            q("[data-fade]"),
-            { autoAlpha: 0, y: 16 },
-            { autoAlpha: 1, y: 0, duration: 1, stagger: 0.09, ease: "expo.out" },
-            afterIntro ? 0.45 : 1.15,
-          );
         });
-        return () => {
-          cancel();
-          breathing.kill();
-        };
+        return cancel;
       });
 
       mm.add(MQ.desktop, () => {
-        gsap
-          .timeline({ scrollTrigger: { trigger: root.current, start: "top top", end: "bottom bottom", scrub: 0.9 } })
-          .to(q("[data-copy]"), { autoAlpha: 0, y: -70, duration: 0.3, ease: "power2.in" }, 0)
-          .to(q("[data-cue]"), { autoAlpha: 0, duration: 0.1 }, 0)
-          .to(q("[data-scrim]"), { autoAlpha: 0, duration: 0.35 }, 0.05)
-          .fromTo(
-            q("[data-shrink]"),
-            { clipPath: "inset(0% 0% 0% 0% round 0vw 0vw 0vw 0vw)" },
-            { clipPath: "inset(9% 32% 7% 32% round 18vw 18vw 0vw 0vw)", duration: 1, ease: "power2.inOut" },
-            0.05,
-          )
-          .to(q("[data-recenter]"), { x: "-21vw", duration: 1, ease: "power2.inOut" }, 0.05)
-          .fromTo(q("[data-word='left']"), { autoAlpha: 0, x: "-5vw" }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.62)
-          .fromTo(q("[data-word='right']"), { autoAlpha: 0, x: "5vw" }, { autoAlpha: 1, x: 0, duration: 0.5 }, 0.68)
-          .to({}, { duration: 0.3 });
+        const stage = q("[data-stage]")[0] as HTMLElement;
+        const slot = q("[data-pill]")[0] as HTMLElement;
+        const slotImg = q("[data-pill-img]")[0] as HTMLElement;
+        const win = q("[data-window]")[0] as HTMLElement;
 
-        // Parallaxe au pointeur
-        const img = q("[data-img]")[0];
-        const copy = q("[data-copy]")[0];
-        const ix = gsap.quickTo(img, "x", { duration: 1.2, ease: "power3" });
-        const iy = gsap.quickTo(img, "y", { duration: 1.2, ease: "power3" });
-        const cx = gsap.quickTo(copy, "x", { duration: 1.4, ease: "power3" });
+        // Position de la pastille dans la scène, sans tenir compte des transformations en cours.
+        const box = () => {
+          let x = 0;
+          let y = 0;
+          let el: HTMLElement | null = slot;
+          while (el && el !== stage) {
+            x += el.offsetLeft;
+            y += el.offsetTop;
+            el = el.offsetParent as HTMLElement | null;
+          }
+          return { x, y, w: slot.offsetWidth, h: slot.offsetHeight };
+        };
+
+        gsap.set(q("[data-window-copy] > *"), { autoAlpha: 0, y: 50 });
+        const tl = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: "bottom bottom",
+            scrub: 0.8,
+            invalidateOnRefresh: true,
+            // La fenêtre remplace la pastille dès que l'on défile.
+            onUpdate: (self) => {
+              const on = self.progress > 0.002;
+              win.style.visibility = on ? "visible" : "hidden";
+              slotImg.style.visibility = on ? "hidden" : "visible";
+            },
+          },
+        });
+
+        tl.fromTo(
+          win,
+          {
+            x: () => box().x,
+            y: () => box().y,
+            width: () => box().w,
+            height: () => box().h,
+            borderRadius: () => box().h / 2,
+          },
+          {
+            x: () => stage.clientWidth * 0.025,
+            y: () => stage.clientHeight * 0.035,
+            width: () => stage.clientWidth * 0.95,
+            height: () => stage.clientHeight * 0.93,
+            borderRadius: 44,
+            duration: 1,
+            ease: "power2.inOut",
+          },
+          0,
+        )
+          .fromTo(q("[data-window-img]"), { scale: 1.4 }, { scale: 1, duration: 1, ease: "power2.inOut" }, 0)
+          .fromTo(q("[data-copy]"), { autoAlpha: 1, y: 0, scale: 1 }, { autoAlpha: 0, y: -80, scale: 0.94, duration: 0.38, ease: "power2.in" }, 0.02)
+          .fromTo(
+            q("[data-mac]"),
+            { x: 0, y: 0, rotate: 0, autoAlpha: 1 },
+            {
+              x: (i) => (i % 2 ? 1 : -1) * (120 + i * 40),
+              y: (i) => -260 - i * 90,
+              rotate: (i) => (i % 2 ? 50 : -50),
+              autoAlpha: 0,
+              duration: 0.55,
+              ease: "power2.in",
+            },
+            0,
+          )
+          .fromTo(q("[data-badge]"), { autoAlpha: 1, scale: 1 }, { autoAlpha: 0, scale: 0.5, duration: 0.25 }, 0)
+          .fromTo(q("[data-window-copy] > *"), { autoAlpha: 0, y: 50 }, { autoAlpha: 1, y: 0, stagger: 0.06, duration: 0.3, ease: "power3.out" }, 0.74)
+          .to({}, { duration: 0.22 });
+
+        // Parallaxe au pointeur : chaque macaron a sa profondeur.
+        const layers = q<HTMLElement>("[data-depth]").map((el) => ({
+          d: Number(el.dataset.depth),
+          x: gsap.quickTo(el, "x", { duration: 1.3, ease: "power3" }),
+          y: gsap.quickTo(el, "y", { duration: 1.3, ease: "power3" }),
+        }));
         const onMove = (e: PointerEvent) => {
           const nx = e.clientX / window.innerWidth - 0.5;
           const ny = e.clientY / window.innerHeight - 0.5;
-          ix(nx * -22);
-          iy(ny * -14);
-          cx(nx * 8);
+          for (const l of layers) {
+            l.x(nx * 60 * l.d);
+            l.y(ny * 40 * l.d);
+          }
         };
         window.addEventListener("pointermove", onMove, { passive: true });
-        return () => window.removeEventListener("pointermove", onMove);
+        return () => {
+          window.removeEventListener("pointermove", onMove);
+          win.style.visibility = "";
+          slotImg.style.visibility = "";
+        };
+      });
+
+      // Mobile : le titre et les macarons glissent doucement en sortant de l'écran.
+      mm.add(MQ.mobile, () => {
+        gsap
+          .timeline({ defaults: { ease: "none" }, scrollTrigger: { trigger: q("[data-stage]")[0], start: "top top", end: "bottom top", scrub: 0.5 } })
+          .fromTo(q("[data-copy]"), { y: 0 }, { y: -70 }, 0)
+          .fromTo(q("[data-mac]"), { y: 0 }, { y: (i) => -90 - i * 35 }, 0);
       });
 
       return () => mm.revert();
@@ -88,67 +177,101 @@ export function HomeHero() {
   );
 
   return (
-    <div ref={root} className="relative -mt-[var(--header-h)] lg:motion-safe:h-[220svh]">
+    <div ref={root} className="relative -mt-[var(--header-h)] lg:motion-safe:h-[235svh]">
       <section
+        data-stage
         aria-labelledby="accueil-titre"
-        className="relative h-[calc(100svh-68px)] min-h-[560px] overflow-hidden bg-cream lg:h-svh lg:min-h-[640px] lg:motion-safe:sticky lg:motion-safe:top-0"
+        className="relative isolate flex min-h-[100svh] items-center overflow-hidden bg-cream pb-10 pt-[calc(var(--header-h)+1.5rem)] lg:h-svh lg:min-h-[680px] lg:pb-0 lg:motion-safe:sticky lg:motion-safe:top-0"
       >
-        {/* La devise, de part et d'autre de l'arche en fin de séquence */}
-        <div aria-hidden="true" className="absolute inset-x-[var(--gutter)] inset-y-0 hidden items-center justify-between lg:flex motion-reduce:hidden">
-          <span data-word="left" className="invisible font-script text-[clamp(2.4rem,4.6vw,5.2rem)] leading-none text-blue">
-            Le goût
-          </span>
-          <span data-word="right" className="invisible font-script text-[clamp(2.4rem,4.6vw,5.2rem)] leading-none text-blue">
-            du savoir-faire
-          </span>
-        </div>
+        <Glow className="-z-10" />
 
-        <div data-shrink className="absolute inset-0">
-          <div data-frame className="absolute inset-0 overflow-hidden bg-[#060504]">
-            {/* Le bord gauche de la photo se fond dans le noir, y compris quand elle se recentre */}
-            <div data-recenter className="absolute inset-y-0 right-0 w-full lg:w-[58%] lg:[mask-image:linear-gradient(90deg,transparent,black_18%)]">
-              <div data-img className="absolute inset-0">
-                <div data-breathe className="absolute inset-0">
-                  <Photo name="farineSurPain" sizes="(min-width: 1024px) 60vw, 100vw" preload />
+        {MACARONS.map((m, i) => (
+          <div key={m.flavour} data-mac aria-hidden="true" className={cn("absolute -z-[5]", m.className)}>
+            <div data-depth={m.depth}>
+              <div data-pop>
+                <div className="animate-bob" style={{ "--rot": `${m.rot}deg`, "--bob-d": m.bob, "--bob-delay": `${-i * 1.3}s` } as CSSProperties}>
+                  <Macaron flavour={m.flavour} className="w-full drop-shadow-[0_18px_22px_rgb(18_61_88/0.18)]" />
                 </div>
               </div>
             </div>
-            <div
-              data-scrim
-              aria-hidden="true"
-              className="absolute inset-0 bg-[linear-gradient(180deg,rgb(6_5_4/0.5)_0%,rgb(6_5_4/0.05)_22%,rgb(6_5_4/0.72)_46%,rgb(6_5_4/0.97)_100%)] lg:bg-[linear-gradient(90deg,rgb(6_5_4/0.55)_30%,rgb(6_5_4/0)_58%)]"
-            />
-            <FlourDust />
           </div>
-        </div>
+        ))}
 
-        <div data-copy className="on-dark absolute inset-0 flex flex-col justify-end px-[var(--gutter)] pb-8 text-ivory sm:pb-12 lg:justify-center lg:pb-0 lg:pl-[max(var(--gutter),calc((100vw-1760px)/2+var(--gutter)))] lg:pt-[var(--header-h)]">
-          <p data-fade className="font-script text-[clamp(1.7rem,2.4vw,2.6rem)] leading-none text-champagne">
-            Boulangerie et pâtisserie
+        <div data-copy className="container-x relative flex flex-col items-center text-center">
+          <h1 id="accueil-titre" data-split className="text-blue-deep">
+            <span data-fade className="chip bg-ivory/80 text-blue-deep ring-1 ring-line backdrop-blur-sm">
+              <span aria-hidden="true" className="flex -space-x-1">
+                <span className="size-2.5 rounded-full bg-framboise ring-2 ring-ivory" />
+                <span className="size-2.5 rounded-full bg-citron ring-2 ring-ivory" />
+                <span className="size-2.5 rounded-full bg-pistache ring-2 ring-ivory" />
+              </span>
+              Boulangerie-pâtisserie à Rantigny
+            </span>
+            <span className="mt-7 block font-display text-[clamp(2.6rem,12vw,5.6rem)] lg:text-[clamp(5rem,8.6vw,9.4rem)] font-[420] leading-[0.98] tracking-[-0.035em] [font-variation-settings:'SOFT'_100] lg:mt-9">
+              <span className="block">
+                <Word>Le</Word> <Word>goût</Word>{" "}
+                <span
+                  data-pill
+                  className="relative mx-[0.04em] inline-block h-[0.8em] w-[1.85em] -translate-y-[0.04em] overflow-hidden rounded-full bg-paper align-middle shadow-[0_18px_40px_-18px_rgb(18_61_88/0.55)] ring-[0.06em] ring-ivory"
+                >
+                  <span data-pill-img className="absolute inset-0">
+                    <Photo as="span" name="fraisier" sizes="(min-width: 1024px) 18vw, 34vw" preload focus="50% 42%" />
+                  </span>
+                </span>{" "}
+                <Word>du</Word>
+              </span>
+              <span className="block">
+                <Word className="italic text-blue">savoir‑faire</Word>
+              </span>
+            </span>
+          </h1>
+          <p data-fade className="t-lead mt-7 max-w-[36rem] text-balance text-ink/75 lg:mt-9">
+            Pains, viennoiseries, pâtisseries et gâteaux sur mesure, rue Anatole France.
           </p>
-          <SplitReveal as="h1" id="accueil-titre" onStage delay={0.25} className="t-hero mt-5 max-w-[13ch] lg:max-w-[46vw]">
-            Chaque création a le goût d’une passion.
-          </SplitReveal>
-          <p data-fade className="t-lead mt-6 max-w-md text-ivory/85">
-            Pains, viennoiseries et pâtisseries imaginés avec gourmandise, au cœur de Rantigny.
-          </p>
-          <div data-fade className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink href="/nos-creations" variant="light">
+          <div data-fade className="mt-8 flex flex-wrap justify-center gap-3">
+            <ButtonLink href="/nos-creations" arrow>
               Découvrir nos créations
             </ButtonLink>
-            <ButtonLink href="/gateaux-sur-mesure" variant="outline-light">
+            <ButtonLink href="/gateaux-sur-mesure" variant="outline">
               Commander un gâteau
             </ButtonLink>
           </div>
         </div>
 
-        <div data-cue aria-hidden="true" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 text-ivory/85 lg:block motion-reduce:hidden">
-          <span data-fade className="flex flex-col items-center gap-3">
-            <span className="t-small">Défiler</span>
-            <span className="relative h-12 w-px overflow-hidden bg-ivory/30">
-              <span className="absolute inset-x-0 top-0 h-1/3 bg-ivory [animation:scroll-cue_2.2s_var(--ease-luxe)_infinite]" />
-            </span>
-          </span>
+        <div data-badge className="absolute bottom-[5vh] right-[3.5vw] hidden lg:block">
+          <div data-pop>
+            <a
+              href="#nos-univers"
+              aria-label="Découvrir la suite de la page"
+              className="group block rounded-full text-blue-deep transition-transform duration-500 ease-[var(--ease-spring)] hover:scale-105"
+            >
+              <RotatingBadge text="Boulangerie · Pâtisserie · Rantigny · " className="size-36 bg-ivory/70 backdrop-blur-sm">
+                <span className="grid size-14 place-items-center rounded-full bg-blue-deep text-ivory transition-colors duration-500 group-hover:bg-framboise">
+                  <ArrowDown className="size-5 transition-transform duration-500 group-hover:translate-y-0.5" aria-hidden="true" />
+                </span>
+              </RotatingBadge>
+            </a>
+          </div>
+        </div>
+
+        {/* Fenêtre qui s'ouvre au défilement (desktop) : elle prend la place exacte de la pastille. */}
+        <div
+          data-window
+          aria-hidden="true"
+          className="pointer-events-none invisible absolute left-0 top-0 z-10 hidden overflow-hidden bg-paper shadow-[var(--shadow-float)] lg:motion-safe:block"
+        >
+          <div data-window-img className="absolute inset-0">
+            <Photo name="fraisier" sizes="95vw" focus="50% 45%" />
+          </div>
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(11_39_56/0)_30%,rgb(11_39_56/0.82)_100%),linear-gradient(90deg,rgb(11_39_56/0.45),rgb(11_39_56/0)_55%)]" />
+          <div data-window-copy className="on-dark absolute inset-x-0 bottom-0 flex items-end justify-between gap-10 p-[3.2vw] text-ivory">
+            <p className="t-hero max-w-[12ch]">
+              Du pétrin à la vitrine, <em className="text-citron">le soin du détail.</em>
+            </p>
+            <p className="max-w-xs pb-2 text-[1.02rem] text-ivory/85">
+              Notre grand fraisier aux fruits frais, l’une des créations à commander pour vos occasions.
+            </p>
+          </div>
         </div>
       </section>
     </div>

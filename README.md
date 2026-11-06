@@ -18,7 +18,7 @@ Node.js 20.9 ou plus récent.
 
 | Page | Route | Personnalité |
 |---|---|---|
-| Accueil | `/` | Logo qui s’ouvre sur la page, hero qui se referme en arche, galerie horizontale, phrase qui s’allume mot à mot, shooting du gâteau |
+| Accueil | `/` | Enseigne qui s’écrit puis se relève comme un store, titre où la photo du fraisier est sertie puis s’ouvre en grande fenêtre, rubans de spécialités, cartes d’univers qui s’empilent, phrase qui s’allume mot à mot avec photos rondes, number cake dans un anneau de texte, plan stylisé |
 | Nos créations | `/nos-creations` | Uniquement le catalogue : filtres (`?categorie=pains`…), fiches produit, plein écran |
 | Gâteaux sur mesure | `/gateaux-sur-mesure` | Uniquement la commande : configurateur en 5 étapes, envoi Formspree |
 | Notre maison | `/notre-maison` | Le métier en 4 chapitres (le geste, la pâte, la cuisson, le détail), image collée qui change au défilement |
@@ -95,15 +95,19 @@ Protection : champ pot de miel (`_gotcha`), validation Zod côté client, filtra
 - Lenis : défilement doux sur souris/trackpad uniquement ; le tactile garde le défilement natif.
 - Radix Dialog (base de shadcn/ui) pour les fenêtres accessibles, React Hook Form + Zod, Lucide.
 - `next/image` : AVIF/WebP, tailles adaptées à chaque écran, flou de chargement, aucun décalage de mise en page.
-- Polices auto-hébergées (Cormorant, Manrope, Damion) : aucune requête vers Google Fonts.
+- Polices auto-hébergées (Fraunces avec l’axe SOFT pour les titres, Manrope pour le texte) : aucune requête vers Google Fonts.
 - Logo : vectorisé depuis le fichier fourni (`public/logo-le-duo-dartisans.svg`, tracé dans `lib/logo-path.ts`).
 
-**Animations** : le motion design fait partie de l’identité du site. L’intro se joue une fois par visite et peut être passée (bouton, clic ou Échap). `prefers-reduced-motion` est respecté partout.
+**Direction artistique « La vitrine en couleurs »** : le bleu de la façade et la crème des menuiseries pour la base, la framboise, la pistache et le citron des vitrines pour les accents (jetons dans `styles/globals.css`). Tout est arrondi : en-tête et boutons en pastille, cartes de 28 à 56 px d’arrondi, sections bleues aux coins arrondis, arches. Motif signature : des photos rondes serties dans les titres, comme des gâteaux dans une vitrine. Éléments décoratifs partagés (pastille, macaron, badge au texte tournant, halos de couleur) : `components/ui/Decor.tsx`.
+
+**Animations** : le motion design fait partie de l’identité du site. L’intro se joue une fois par visite et peut être passée (bouton, clic ou Échap). Entre les pages, une vague bleue aux bords arrondis. `prefers-reduced-motion` est respecté partout.
 
 Trois règles évitent les bugs (plantage au rechargement, molette bloquée dans les fenêtres, clignotements) :
 1. **Pas de `pin` ScrollTrigger** : les séquences utilisent `position: sticky` et un `scrub`.
 2. **Pas de `once` ScrollTrigger** : les apparitions uniques passent par IntersectionObserver (`components/animations/Reveal.tsx`).
-3. **États de départ en CSS** : la classe `.anim`, posée avant le premier affichage, masque ce qui doit apparaître. Si le JavaScript ne démarre pas, elle est retirée au bout de 8 secondes.
+3. **États de départ en CSS** : la classe `.anim`, posée avant le premier affichage, masque ce qui doit apparaître (`data-fade`, `data-split`, `data-pop`, `data-reveal`). Si le JavaScript ne démarre pas, elle est retirée au bout de 8 secondes.
+4. **Pas de `stagger` dans un `fromTo` de timeline** quand l’état de départ compte : GSAP ne l’applique alors qu’au premier élément. Un `fromTo` par élément, ou un `gsap.set` préalable.
+5. **Mouvements continus en propriétés CSS individuelles** (`translate`, `rotate`, `scale`) : GSAP garde la main sur `transform` sans conflit.
 
 **Cookies** : aucun cookie de mesure ni publicitaire, donc pas de bandeau. La carte Google ne se charge qu’au clic du visiteur.
 
@@ -111,7 +115,7 @@ Trois règles évitent les bugs (plantage au rechargement, molette bloquée dans
 
 ```
 app/                 pages, métadonnées, sitemap, robots, icônes
-components/animations  intro, transitions, défilement, révélations, farine
+components/animations  intro, transitions, défilement, révélations, photo qui s’élargit
 components/layout      en-tête, pied de page, barre mobile, fil d’Ariane
 components/home        sections de l’accueil
 components/products    catalogue et fiche produit
@@ -119,7 +123,7 @@ components/order       configurateur, calendrier, schéma, envoi Formspree
 data/                  produits, images, options de commande
 lib/                   configuration, horaires, dates, SEO, GSAP
 public/images/         photographies optimisées
-styles/globals.css     jetons de design (couleurs, typographie, moulures)
+styles/globals.css     jetons de design (couleurs, arrondis, typographie, mouvements continus)
 ```
 
 Crédits photos : Le Duo d’Artisans pour les produits et la boutique ; photos d’illustration sous licence Unsplash, créditées dans les mentions légales.

@@ -22,8 +22,10 @@ const TransitionContext = createContext<Ctx>({ navigate: () => {} });
 export const useTransitionNav = () => useContext(TransitionContext);
 
 /**
- * Rideau bleu signature entre les pages : il monte, la page change sous
- * lui, puis il se retire vers le haut.
+ * Vague bleue entre les pages : un panneau aux bords arrondis monte depuis
+ * le bas, la page change sous lui, puis il poursuit sa course vers le haut.
+ * Le panneau mesure 100vh + deux arrondis de 18vh : ses courbes restent hors écran
+ * quand il couvre la page.
  */
 export function TransitionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -53,8 +55,8 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
             gsap.set(el, { visibility: "hidden" });
           },
         })
-        .to(mark.current, { autoAlpha: 0, y: -16, duration: 0.3, ease: "power2.in" })
-        .to(el, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.75, ease: "expo.inOut" }, "<0.05");
+        .to(mark.current, { autoAlpha: 0, y: -24, duration: 0.3, ease: "power2.in" })
+        .to(el, { y: -window.innerHeight * 1.4, duration: 0.85, ease: "expo.inOut" }, "<0.05");
     });
   }, []);
 
@@ -74,8 +76,8 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       busy.current = true;
       setCovering(true);
       pending.current = target;
-      gsap.set(panel.current, { visibility: "visible", clipPath: "inset(100% 0% 0% 0%)" });
-      gsap.set(mark.current, { autoAlpha: 0, y: 16 });
+      gsap.set(panel.current, { visibility: "visible", y: window.innerHeight * 1.2 });
+      gsap.set(mark.current, { autoAlpha: 0, y: 24 });
       gsap
         .timeline({
           onComplete: () => {
@@ -84,8 +86,8 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
             fallback.current = window.setTimeout(reveal, 4000);
           },
         })
-        .to(panel.current, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.55, ease: "expo.inOut" })
-        .to(mark.current, { autoAlpha: 1, y: 0, duration: 0.3 }, "-=0.2");
+        .to(panel.current, { y: 0, duration: 0.7, ease: "expo.inOut" })
+        .to(mark.current, { autoAlpha: 1, y: 0, duration: 0.35, ease: "back.out(2)" }, "-=0.25");
     },
     [reveal, router],
   );
@@ -96,12 +98,18 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       <div
         ref={panel}
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[110] grid place-items-center bg-blue-deep"
-        style={{ visibility: "hidden", clipPath: "inset(100% 0% 0% 0%)" }}
+        className="pointer-events-none fixed inset-x-[-4vw] top-[-18vh] z-[110] h-[136vh] bg-blue [border-radius:50%/18vh]"
+        style={{ visibility: "hidden", transform: "translateY(120vh)" }}
       >
-        <div ref={mark} className="flex flex-col items-center gap-4 text-ivory opacity-0">
-          <span className="logo-mask w-[min(62vw,340px)]" />
-          <span className="h-px w-16 bg-champagne" />
+        <div className="absolute inset-x-0 top-[18vh] grid h-[100vh] place-items-center">
+          <div ref={mark} className="flex flex-col items-center gap-6 text-ivory opacity-0">
+            <span className="logo-mask w-[min(64vw,360px)]" />
+            <span className="flex gap-2">
+              <span className="size-2.5 animate-bounce rounded-full bg-framboise [animation-delay:-0.3s]" />
+              <span className="size-2.5 animate-bounce rounded-full bg-citron [animation-delay:-0.15s]" />
+              <span className="size-2.5 animate-bounce rounded-full bg-pistache" />
+            </span>
+          </div>
         </div>
       </div>
     </TransitionContext.Provider>

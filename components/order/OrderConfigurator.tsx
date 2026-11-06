@@ -155,7 +155,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
 
   if (status === "success") {
     return (
-      <div ref={top} className="mx-auto max-w-2xl py-10 text-center">
+      <div ref={top} className="mx-auto max-w-2xl rounded-[2rem] bg-ivory px-6 py-12 text-center shadow-[var(--shadow-soft)] sm:rounded-[2.5rem] sm:px-12 sm:py-16">
         <svg viewBox="0 0 80 80" className="mx-auto size-20 text-blue" aria-hidden="true">
           <motion.circle cx="40" cy="40" r="37" fill="none" stroke="currentColor" strokeWidth="1.5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.9, ease }} />
           <motion.path d="M25 41 L36 52 L56 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6, delay: 0.7, ease }} />
@@ -167,7 +167,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
           Notre équipe reviendra vers vous pour confirmer les détails, la disponibilité et le tarif de votre
           création.
         </p>
-        <p className="mt-6 inline-block border-l-2 border-champagne bg-ivory px-5 py-4 text-left font-semibold text-blue-deep">
+        <p className="mt-6 inline-block rounded-2xl bg-citron-soft px-5 py-4 text-left font-semibold text-cacao">
           L’envoi de votre demande ne constitue pas une confirmation de commande.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
@@ -194,7 +194,13 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
       {/* Progression et résumé vivant */}
       <aside className="min-w-0 lg:col-span-4" aria-label="Progression de la demande">
         <div className="lg:sticky lg:top-[calc(var(--header-h)+2rem)]">
-          <ol className="scroll-row -mx-1 flex gap-1 overflow-x-auto px-1 lg:mx-0 lg:flex-col lg:gap-0 lg:overflow-visible lg:px-0">
+          <div aria-hidden="true" className="mb-4 hidden h-2 overflow-hidden rounded-full bg-ivory ring-1 ring-line lg:block">
+            <div
+              className="h-full rounded-full bg-[linear-gradient(90deg,var(--color-blue),var(--color-framboise))] transition-[width] duration-700 ease-[var(--ease-luxe)]"
+              style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+            />
+          </div>
+          <ol className="scroll-row -mx-1 flex gap-1 overflow-x-auto px-1 lg:mx-0 lg:flex-col lg:gap-1 lg:overflow-visible lg:rounded-[1.75rem] lg:bg-ivory lg:p-2 lg:ring-1 lg:ring-line">
             {STEPS.map((s, i) => {
               const state = i < step ? "done" : i === step ? "current" : "todo";
               return (
@@ -205,14 +211,14 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                     onClick={() => i < step && goTo(i)}
                     aria-current={state === "current" ? "step" : undefined}
                     className={cn(
-                      "flex min-h-11 items-center gap-3 rounded-full px-3 text-[0.92rem] transition-colors lg:w-full lg:rounded-none lg:border-b lg:border-line lg:px-0 lg:py-3",
-                      state === "current" ? "bg-blue-deep text-ivory lg:bg-transparent lg:text-blue-deep" : state === "done" ? "text-blue-deep hover:text-blue" : "text-ink/40",
+                      "flex min-h-11 items-center gap-3 rounded-full px-3 text-[0.92rem] transition-colors duration-300 lg:w-full lg:py-2.5 lg:pl-2.5",
+                      state === "current" ? "bg-blue-deep text-ivory" : state === "done" ? "bg-ivory text-blue-deep ring-1 ring-line hover:bg-blue-soft lg:ring-0" : "text-ink/40",
                     )}
                   >
                     <span
                       className={cn(
                         "grid size-7 shrink-0 place-items-center rounded-full border text-xs font-semibold tabular-nums transition-colors",
-                        state === "done" ? "border-blue bg-blue text-ivory" : state === "current" ? "border-champagne text-champagne lg:border-blue-deep lg:text-blue-deep" : "border-current",
+                        state === "done" ? "border-pistache bg-pistache text-blue-night" : state === "current" ? "border-ivory bg-ivory text-blue-deep" : "border-current",
                       )}
                     >
                       {state === "done" ? <Check className="size-3.5" aria-hidden="true" /> : i + 1}
@@ -227,10 +233,10 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
             })}
           </ol>
 
-          <div className="mt-8 hidden border border-line bg-ivory p-6 lg:block">
+          <div className="mt-4 hidden rounded-[1.75rem] bg-ivory p-6 ring-1 ring-line lg:block">
             <p className="t-caption text-mute">Votre demande</p>
             <div className="mt-4 flex gap-4">
-              <div className="relative size-20 shrink-0 overflow-hidden bg-paper">
+              <div className="relative size-20 shrink-0 overflow-hidden rounded-2xl bg-paper">
                 {inspiration?.image ? (
                   <Image src={images[inspiration.image].src} alt="" fill sizes="80px" className="object-cover" />
                 ) : (
@@ -250,7 +256,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                 <dd className="text-ink/70 first-letter:uppercase">{values.pickupDate ? formatLongDate(values.pickupDate) : ""}</dd>
               </dl>
             </div>
-            <p className="mt-5 flex gap-2 border-t border-line pt-4 t-small text-mute">
+            <p className="mt-5 flex gap-2 rounded-2xl bg-cream p-3.5 t-small text-mute">
               <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
               Aucun paiement en ligne. Le prix et la disponibilité vous sont confirmés par la boutique.
             </p>
@@ -266,11 +272,11 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
           if (step < STEPS.length - 1) void next();
           else void onSubmit(e);
         }}
-        className="relative min-w-0 lg:col-span-8"
+        className="relative min-w-0 rounded-[2rem] bg-ivory p-5 shadow-[var(--shadow-soft)] sm:rounded-[2.5rem] sm:p-10 lg:col-span-8 lg:p-12"
         aria-labelledby="step-heading"
       >
         {isDemoMode && (
-          <div role="note" className="mb-10 flex gap-3 border border-champagne/60 bg-[#fbf5ea] p-5 text-[0.95rem] text-cacao">
+          <div role="note" className="mb-10 flex gap-3 rounded-2xl bg-citron-soft p-5 text-[0.95rem] text-cacao">
             <Info className="mt-0.5 size-5 shrink-0 text-champagne-deep" aria-hidden="true" />
             <p>
               <strong className="font-semibold">Mode démonstration.</strong> Le formulaire n’est pas encore relié à la
@@ -290,10 +296,10 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
           <input id="company" type="text" tabIndex={-1} autoComplete="off" {...register("company")} />
         </div>
 
-        <p className="t-caption text-champagne-deep">
+        <p className="inline-flex items-center gap-2 rounded-full bg-blue-soft px-3 py-1 text-[0.8rem] font-semibold text-blue-deep">
           Étape {step + 1} sur {STEPS.length}
         </p>
-        <h2 id="step-heading" ref={heading} tabIndex={-1} className="t-h2 mt-2 text-blue-deep outline-none">
+        <h2 id="step-heading" ref={heading} tabIndex={-1} className="t-h2 mt-4 text-blue-deep outline-none">
           {STEPS[step].title}
         </h2>
 
@@ -318,17 +324,20 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                         <label
                           key={o.id}
                           className={cn(
-                            "group relative flex min-h-[112px] cursor-pointer flex-col justify-between gap-4 border p-5 transition-[border-color,background-color] duration-500",
-                            on ? "border-blue-deep bg-ivory" : "border-line bg-cream hover:border-blue-deep/40 hover:bg-ivory",
+                            "group relative flex min-h-[120px] cursor-pointer flex-col justify-between gap-4 rounded-[1.5rem] p-5 transition-[background-color,box-shadow,translate] duration-500 ease-[var(--ease-luxe)]",
+                            on ? "bg-blue-soft shadow-[inset_0_0_0_2px_var(--color-blue-deep)]" : "bg-cream shadow-[inset_0_0_0_1px_var(--color-line)] hover:-translate-y-0.5 hover:bg-ivory hover:shadow-[inset_0_0_0_1px_rgb(18_61_88/0.3),0_14px_30px_-20px_rgb(18_61_88/0.5)]",
                           )}
                         >
                           <input type="radio" value={o.id} className="peer sr-only" {...register("occasion")} />
                           <span className="flex items-start justify-between">
-                            <Icon
-                              className={cn("size-6 transition-transform duration-500 ease-[var(--ease-luxe)]", on ? "-rotate-6 scale-110 text-blue" : "text-champagne-deep group-hover:-rotate-3")}
-                              strokeWidth={1.4}
-                              aria-hidden="true"
-                            />
+                            <span
+                              className={cn(
+                                "grid size-11 place-items-center rounded-full transition-[background-color,color,rotate,scale] duration-500 ease-[var(--ease-spring)]",
+                                on ? "-rotate-6 scale-110 bg-blue-deep text-ivory" : "bg-ivory text-blue group-hover:-rotate-6",
+                              )}
+                            >
+                              <Icon className="size-5" strokeWidth={1.6} aria-hidden="true" />
+                            </span>
                             <span className={cn("grid size-6 place-items-center rounded-full border transition-colors", on ? "border-blue-deep bg-blue-deep text-ivory" : "border-line")}>
                               <AnimatePresence>
                                 {on && (
@@ -343,7 +352,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                             <span className="block font-display text-[1.4rem] font-medium leading-tight text-blue-deep">{o.label}</span>
                             <span className="mt-1 block t-small text-mute">{o.hint}</span>
                           </span>
-                          <span aria-hidden="true" className="pointer-events-none absolute inset-0 hidden ring-2 ring-blue ring-offset-2 peer-focus-visible:block" />
+                          <span aria-hidden="true" className="pointer-events-none absolute inset-0 hidden rounded-[inherit] ring-2 ring-blue ring-offset-2 peer-focus-visible:block" />
                         </label>
                       );
                     })}
@@ -384,7 +393,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                               },
                             })}
                           />
-                          <div className={cn("relative aspect-[4/5] overflow-hidden border-2 transition-colors duration-500", on ? "border-blue-deep" : "border-transparent")}>
+                          <div className={cn("relative aspect-[4/5] overflow-hidden rounded-[1.5rem] ring-offset-[3px] ring-offset-ivory transition-[box-shadow] duration-500", on ? "ring-[3px] ring-blue-deep" : "ring-0")}>
                             {insp.image ? (
                               <Image
                                 src={images[insp.image].src}
@@ -396,18 +405,18 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                                 className={cn("object-cover transition-transform duration-[1.2s] ease-[var(--ease-luxe)]", on ? "scale-[1.04]" : "group-hover:scale-[1.03]")}
                               />
                             ) : (
-                              <div className="flex size-full flex-col items-center justify-center gap-4 bg-blue-deep p-6 text-center text-ivory">
+                              <div className="flex size-full flex-col items-center justify-center gap-4 bg-[radial-gradient(circle_at_30%_20%,var(--color-blue),var(--color-blue-deep))] p-6 text-center text-ivory">
                                 <PenLine className="size-8 text-champagne" strokeWidth={1.3} aria-hidden="true" />
-                                <span className="font-script text-[1.7rem] leading-tight">Votre idée</span>
+                                <span className="font-display text-[1.7rem] italic leading-tight">Votre idée</span>
                               </div>
                             )}
                             <span className={cn("absolute right-3 top-3 grid size-8 place-items-center rounded-full transition", on ? "bg-blue-deep text-ivory" : "bg-ivory/85 text-transparent")}>
                               <Check className="size-4" aria-hidden="true" />
                             </span>
                           </div>
-                          <span className="mt-3 block font-display text-[1.3rem] font-medium leading-tight text-blue-deep">{insp.label}</span>
-                          <span className="mt-0.5 block t-small text-mute">{insp.description}</span>
-                          <span aria-hidden="true" className="pointer-events-none absolute -inset-1 hidden ring-2 ring-blue peer-focus-visible:block" />
+                          <span className="mt-3 block px-1 font-display text-[1.3rem] font-medium leading-tight text-blue-deep">{insp.label}</span>
+                          <span className="mt-0.5 block px-1 t-small text-mute">{insp.description}</span>
+                          <span aria-hidden="true" className="pointer-events-none absolute -inset-1.5 hidden rounded-[1.75rem] ring-2 ring-blue peer-focus-visible:block" />
                         </label>
                       );
                     })}
@@ -427,8 +436,8 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                         control={control}
                         name="guests"
                         render={({ field }) => (
-                          <div className="flex items-center gap-3 border-b border-blue-deep/25 py-1.5">
-                            <button type="button" aria-label="Une personne de moins" onClick={() => field.onChange(Math.max(siteConfig.order.guests.min, (Number(field.value) || 0) - 1))} className="grid size-10 place-items-center rounded-full border border-line text-blue-deep transition hover:border-blue-deep">
+                          <div className="flex w-fit items-center gap-2 rounded-full border border-line bg-cream p-1.5">
+                            <button type="button" aria-label="Une personne de moins" onClick={() => field.onChange(Math.max(siteConfig.order.guests.min, (Number(field.value) || 0) - 1))} className="grid size-11 place-items-center rounded-full bg-ivory text-blue-deep shadow-[0_2px_8px_-4px_rgb(18_61_88/0.4)] transition hover:bg-blue-deep hover:text-ivory active:scale-95">
                               <Minus className="size-4" />
                             </button>
                             <input
@@ -444,10 +453,10 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                               aria-describedby="guests-hint"
                               className="w-16 bg-transparent text-center font-display text-[1.8rem] font-medium tabular-nums text-blue-deep [appearance:textfield] focus:outline-none [&::-webkit-inner-spin-button]:appearance-none"
                             />
-                            <button type="button" aria-label="Une personne de plus" onClick={() => field.onChange(Math.min(siteConfig.order.guests.max, (Number(field.value) || 0) + 1))} className="grid size-10 place-items-center rounded-full border border-line text-blue-deep transition hover:border-blue-deep">
+                            <button type="button" aria-label="Une personne de plus" onClick={() => field.onChange(Math.min(siteConfig.order.guests.max, (Number(field.value) || 0) + 1))} className="grid size-11 place-items-center rounded-full bg-ivory text-blue-deep shadow-[0_2px_8px_-4px_rgb(18_61_88/0.4)] transition hover:bg-blue-deep hover:text-ivory active:scale-95">
                               <Plus className="size-4" />
                             </button>
-                            <span className="text-mute">personnes</span>
+                            <span className="pr-4 text-mute">personnes</span>
                           </div>
                         )}
                       />
@@ -515,7 +524,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
 
                   {siteConfig.formspree.acceptsFiles && (
                     <Field id="photo" label="Photo d’inspiration" optional hint={`Image JPG ou PNG, ${siteConfig.formspree.maxFileSizeMb} Mo maximum.`}>
-                      <input id="photo" type="file" accept="image/jpeg,image/png,image/webp" className="mt-3 block w-full text-sm file:mr-4 file:min-h-11 file:rounded-[2px] file:border-0 file:bg-blue-deep file:px-5 file:font-semibold file:text-ivory" {...register("photo")} />
+                      <input id="photo" type="file" accept="image/jpeg,image/png,image/webp" className="mt-3 block w-full text-sm file:mr-4 file:min-h-11 file:rounded-full file:border-0 file:bg-blue-deep file:px-5 file:font-semibold file:text-ivory" {...register("photo")} />
                     </Field>
                   )}
                 </div>
@@ -536,13 +545,13 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
                   </div>
                   <div>
                     <p className="text-[0.95rem] font-semibold text-blue-deep">Mode de retrait</p>
-                    <p className="mt-3 flex items-center gap-3 border-b border-blue-deep/25 py-3 text-ink">
+                    <p className="mt-2.5 flex items-center gap-3 rounded-2xl bg-cream px-4 py-3.5 text-ink ring-1 ring-line">
                       <span className="grid size-5 place-items-center rounded-full border-[5px] border-blue-deep" aria-hidden="true" />
                       {siteConfig.order.pickupLabel}
                     </p>
                   </div>
                   <div>
-                    <label className="flex cursor-pointer items-start gap-4">
+                    <label className="flex cursor-pointer items-start gap-4 rounded-2xl bg-cream p-4 ring-1 ring-line">
                       <input type="checkbox" className="mt-1 size-5 shrink-0 accent-[var(--color-blue-deep)]" aria-invalid={!!errors.consent} aria-describedby="consent-error" {...register("consent")} />
                       <span className="text-[0.95rem] leading-relaxed text-ink/85">
                         J’accepte que mes coordonnées soient utilisées par {siteConfig.name} pour traiter ma demande et me
@@ -563,7 +572,7 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
         </div>
 
         {status === "error" && (
-          <div role="alert" className="mt-8 border-l-2 border-[#9e3a28] bg-ivory p-5 text-[0.95rem] text-ink">
+          <div role="alert" className="mt-8 rounded-2xl bg-rose p-5 text-[0.95rem] text-ink">
             <p className="font-semibold text-[#9e3a28]">La demande n’a pas été envoyée.</p>
             <p className="mt-1">
               {errorMsg} Vous pouvez aussi nous appeler au{" "}
@@ -577,14 +586,14 @@ export function OrderConfigurator({ inspiration: inspirationParam }: { inspirati
 
         <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-8">
           {step > 0 ? (
-            <button type="button" onMouseDown={keepFocus} onClick={() => goTo(step - 1)} className="min-h-12 px-1 font-semibold text-blue-deep link-draw">
+            <Button type="button" variant="outline" onMouseDown={keepFocus} onClick={() => goTo(step - 1)}>
               Retour
-            </button>
+            </Button>
           ) : (
             <span />
           )}
           {step < STEPS.length - 1 ? (
-            <Button type="submit" onMouseDown={keepFocus}>
+            <Button type="submit" onMouseDown={keepFocus} arrow>
               Continuer
             </Button>
           ) : (
@@ -650,12 +659,12 @@ function Summary({ values: v, onEdit }: { values: OrderValues; onEdit: (step: nu
 
   return (
     <div>
-      <div className="grid gap-10">
+      <div className="grid gap-3">
         {groups.map((g) => (
-          <section key={g.title} aria-label={g.title} className="border-t border-blue-deep/15 pt-6">
+          <section key={g.title} aria-label={g.title} className="rounded-[1.5rem] bg-cream p-5 ring-1 ring-line sm:p-6">
             <div className="flex items-baseline justify-between">
               <h3 className="t-h3 text-[1.5rem] text-blue-deep">{g.title}</h3>
-              <button type="button" onClick={() => onEdit(g.step)} className="t-small font-semibold text-blue link-draw">
+              <button type="button" onClick={() => onEdit(g.step)} className="min-h-10 rounded-full bg-ivory px-4 t-small font-semibold text-blue-deep ring-1 ring-line transition hover:bg-blue-deep hover:text-ivory">
                 Modifier
               </button>
             </div>
@@ -672,7 +681,7 @@ function Summary({ values: v, onEdit }: { values: OrderValues; onEdit: (step: nu
           </section>
         ))}
       </div>
-      <p className="mt-10 border-l-2 border-champagne bg-ivory px-5 py-4 font-semibold text-blue-deep">
+      <p className="mt-6 rounded-2xl bg-citron-soft px-5 py-4 font-semibold text-cacao">
         L’envoi de votre demande ne constitue pas une confirmation de commande.
       </p>
       <p className="mt-3 t-small text-mute">

@@ -15,6 +15,8 @@ export function Photo({
   parallax = false,
   focus,
   contain = false,
+  as: Wrapper = "div",
+  decorative = false,
 }: {
   name: ImageKey;
   sizes: string;
@@ -26,13 +28,17 @@ export function Photo({
   parallax?: boolean;
   focus?: string;
   contain?: boolean;
+  /** "span" quand la photo est sertie dans un texte (titre, paragraphe). */
+  as?: "div" | "span";
+  /** Image d'ambiance sans information : texte alternatif vide. */
+  decorative?: boolean;
 }) {
   const img = images[name];
   return (
-    <div className={cn("absolute inset-0", parallax && "-inset-y-[8%]", className)} data-parallax={parallax || undefined}>
+    <Wrapper className={cn("absolute inset-0", parallax && "-inset-y-[8%]", className)} data-parallax={parallax || undefined}>
       <Image
         src={img.src}
-        alt={img.alt}
+        alt={decorative ? "" : img.alt}
         fill
         sizes={sizes}
         preload={preload}
@@ -41,6 +47,6 @@ export function Photo({
         className={cn(contain ? "object-contain" : "object-cover", imgClassName)}
         style={{ objectPosition: focus ?? img.focus ?? "50% 50%" }}
       />
-    </div>
+    </Wrapper>
   );
 }

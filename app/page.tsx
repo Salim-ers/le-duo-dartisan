@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CraftSection } from "@/components/home/CraftSection";
 import { EventSection } from "@/components/home/EventSection";
 import { HomeHero } from "@/components/home/HomeHero";
+import { Marquee } from "@/components/home/Marquee";
 import { Universes } from "@/components/home/Universes";
 import { VisitSection } from "@/components/home/VisitSection";
 import { siteConfig } from "@/lib/site.config";
@@ -17,6 +18,7 @@ export default function HomePage() {
   return (
     <>
       <HomeHero />
+      <Marquee />
       <Universes />
       <CraftSection />
       <EventSection />

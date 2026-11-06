@@ -1,194 +1,238 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   Le Duo d'Artisans — jetons de design
-   Bleu de façade, crème des menuiseries, laiton des vitrines.
+   Le Duo d'Artisans — « La vitrine en couleurs »
+   Le bleu de la façade et la crème des menuiseries pour la base,
+   la framboise, la pistache et le citron des vitrines pour les accents.
+   Tout est arrondi : boutons en pastille, cartes moelleuses, photos
+   serties dans la typographie comme des gâteaux dans une vitrine.
    ------------------------------------------------------------------ */
 @theme {
-  --color-ivory: #fffdf9;
-  --color-cream: #f8f6f1;
-  --color-paper: #efe9de;
-  --color-blue: #2a7aae; /* bleu signature, relevé sur la façade */
-  --color-blue-soft: #d7e6f0;
-  --color-blue-deep: #123d58;
-  --color-blue-night: #0d2d42;
-  --color-champagne: #c5a77d; /* laiton des vitrines */
-  --color-champagne-deep: #76592f;
-  --color-cacao: #46362c;
-  --color-ink: #252525;
-  --color-mute: #66615b;
-  --color-line: #ddd5c7;
+  --color-ivory: #fffdf8;
+  --color-cream: #fbf6ee;
+  --color-paper: #f3ebdd;
+  --color-line: #e7ddcc;
 
-  --font-display: "Cormorant Variable", "Cormorant Garamond", Georgia, serif;
+  --color-blue: #2a7aae; /* bleu de façade */
+  --color-blue-bright: #3d91c6;
+  --color-blue-soft: #dcebf5;
+  --color-blue-deep: #123d58;
+  --color-blue-night: #0b2738;
+
+  --color-framboise: #e4577d;
+  --color-framboise-deep: #a8264b; /* texte sur fond clair (AA) */
+  --color-rose: #fbe1e8;
+  --color-pistache: #9fbd5b;
+  --color-pistache-deep: #4b6519;
+  --color-pistache-soft: #e9f0d4;
+  --color-citron: #f4cf3c;
+  --color-citron-soft: #fcf0c4;
+  --color-caramel: #c98f45;
+
+  --color-champagne: #d6b98d; /* laiton des vitrines, sur fond sombre */
+  --color-champagne-deep: #7a5a2c;
+  --color-cacao: #46362c;
+  --color-ink: #1c2a35;
+  --color-mute: #5d6971;
+
+  --font-display: "Fraunces Variable", "Fraunces", Georgia, serif;
   --font-sans: "Manrope Variable", "Manrope", system-ui, sans-serif;
-  --font-script: "Damion", "Brush Script MT", cursive;
+
+  --radius-card: 1.75rem;
+  --radius-panel: 2.5rem;
+  --radius-sheet: 3.5rem;
 
   --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-curtain: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --shadow-soft: 0 1px 2px rgb(18 61 88 / 0.05), 0 14px 34px -16px rgb(18 61 88 / 0.22);
+  --shadow-float: 0 2px 6px rgb(11 39 56 / 0.06), 0 30px 60px -24px rgb(11 39 56 / 0.38);
 
   --breakpoint-3xl: 1920px;
 }
 
 :root {
+  /* Hauteur réservée à l'en-tête flottant (pastille + marge) */
   --header-h: 76px;
-  /* Hauteur occupée par l'en-tête : les barres collantes se calent dessous. */
   --sticky-top: var(--header-h);
   --gutter: clamp(1rem, 3.2vw, 3rem);
   color-scheme: light;
 }
 
 :root[data-header-hidden] {
-  --sticky-top: 0px;
+  --sticky-top: 12px;
 }
 
 @media (min-width: 1024px) {
   :root {
-    --header-h: 88px;
+    --header-h: 92px;
   }
 }
 
 @layer base {
-html {
-  -webkit-text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-framboise);
+    color: var(--color-ivory);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-blue);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: var(--color-citron);
+  }
+
+  em {
+    font-style: italic;
+  }
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: clip;
-}
-
-body {
-  background: var(--color-cream);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  font-size: 1.0625rem;
-  line-height: 1.65;
-  font-feature-settings: "ss01", "kern";
-  -webkit-font-smoothing: antialiased;
-  overflow-x: clip;
-}
-
-::selection {
-  background: var(--color-blue);
-  color: var(--color-ivory);
-}
-
-:focus-visible {
-  outline: 2px solid var(--color-blue);
-  outline-offset: 3px;
-}
-.on-dark :focus-visible,
-.on-dark:focus-visible {
-  outline-color: var(--color-champagne);
-}
-}
-
-/* ------------------------------ Typographie ------------------------------ */
+/* ------------------------------ Typographie ------------------------------
+   Fraunces avec l'axe SOFT au maximum : des empattements arrondis, gourmands. */
 @utility font-display {
   font-family: var(--font-display);
-  font-optical-sizing: auto;
-}
-@utility font-script {
-  font-family: var(--font-script);
-  font-weight: 400;
+  font-variation-settings: "SOFT" 100;
 }
 
-/* Échelle typographique (rapport ~1.333, titres très ouverts) */
 @utility t-mega {
   font-family: var(--font-display);
-  font-weight: 330;
-  font-size: clamp(3.1rem, 9.2vw, 10.5rem);
-  line-height: 0.9;
-  letter-spacing: -0.025em;
+  font-variation-settings: "SOFT" 100;
+  font-weight: 420;
+  font-size: clamp(3rem, 8.4vw, 9.4rem);
+  line-height: 0.94;
+  letter-spacing: -0.035em;
 }
 @utility t-hero {
   font-family: var(--font-display);
-  font-weight: 340;
-  font-size: clamp(2.6rem, 6.4vw, 7rem);
-  line-height: 0.95;
-  letter-spacing: -0.02em;
+  font-variation-settings: "SOFT" 100;
+  font-weight: 420;
+  font-size: clamp(2.5rem, 5.6vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
 }
 @utility t-h1 {
   font-family: var(--font-display);
-  font-weight: 360;
-  font-size: clamp(2.4rem, 5.2vw, 5.4rem);
-  line-height: 1;
-  letter-spacing: -0.015em;
+  font-variation-settings: "SOFT" 100;
+  font-weight: 430;
+  font-size: clamp(2.2rem, 4.6vw, 4.6rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
 }
 @utility t-h2 {
   font-family: var(--font-display);
-  font-weight: 380;
-  font-size: clamp(2rem, 3.8vw, 3.9rem);
-  line-height: 1.04;
-  letter-spacing: -0.01em;
+  font-variation-settings: "SOFT" 100;
+  font-weight: 440;
+  font-size: clamp(1.85rem, 3.2vw, 3.2rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
 }
 @utility t-h3 {
   font-family: var(--font-display);
-  font-weight: 450;
-  font-size: clamp(1.5rem, 2.1vw, 2.1rem);
-  line-height: 1.12;
+  font-variation-settings: "SOFT" 100;
+  font-weight: 500;
+  font-size: clamp(1.35rem, 1.8vw, 1.8rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 @utility t-lead {
-  font-size: clamp(1.08rem, 1.25vw, 1.25rem);
+  font-size: clamp(1.06rem, 1.2vw, 1.22rem);
   line-height: 1.6;
 }
-/* Petites légendes en italique serif plutôt qu'en capitales */
 @utility t-caption {
   font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100;
   font-style: italic;
   font-weight: 450;
-  font-size: 1.08rem;
+  font-size: 1.05rem;
   line-height: 1.3;
-  letter-spacing: 0.005em;
 }
 @utility t-small {
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
-/* ------------------------------ Moulures ------------------------------
-   Le motif signature : les panneaux moulurés des pilastres bleus de la
-   façade, réinterprétés en double filet autour des photographies. */
-@utility moulure {
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    inset: clamp(8px, 1.1vw, 16px);
-    border: 1px solid rgb(255 253 249 / 0.72);
-    outline: 1px solid rgb(255 253 249 / 0.3);
-    outline-offset: 5px;
-    pointer-events: none;
-    z-index: 2;
-  }
+/* Étiquette en pastille, avec sa pastille de couleur (voir components/ui/Chip) */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding: 0.5rem 1rem 0.5rem 0.75rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
 }
 
 @utility container-x {
   width: 100%;
   margin-inline: auto;
   padding-inline: var(--gutter);
-  max-width: 1760px;
+  max-width: 1600px;
+}
+
+/* Arche : demi-cercle en haut, coins doux en bas. --arch-v = (largeur / 2) / hauteur. */
+@utility rounded-arch {
+  border-radius: 50% 50% var(--r, 1.75rem) var(--r, 1.75rem) / var(--arch-v, 40%) var(--arch-v, 40%) var(--r, 1.75rem)
+    var(--r, 1.75rem);
+}
+
+/* Moulure de la façade, arrondie : double filet intérieur autour d'une photo ou d'un panneau. */
+@utility moulure {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: clamp(8px, 0.9vw, 14px);
+    border-radius: max(0px, calc(var(--r, 2.5rem) - clamp(8px, 0.9vw, 14px)));
+    border: 1px solid rgb(255 253 248 / 0.55);
+    pointer-events: none;
+    z-index: 2;
+  }
 }
 
 /* Lien éditorial : soulignement qui se dessine */
 @utility link-draw {
   background-image: linear-gradient(currentColor, currentColor);
-  background-size: 0% 1px;
+  background-size: 0% 1.5px;
   background-position: 0 100%;
   background-repeat: no-repeat;
   transition: background-size 0.6s var(--ease-luxe);
   padding-bottom: 2px;
   &:hover,
   &:focus-visible {
-    background-size: 100% 1px;
+    background-size: 100% 1.5px;
   }
 }
 
@@ -203,8 +247,8 @@ body {
 
 /* Lignes de texte révélées par masque (SplitText) */
 .split-line-mask {
-  padding-block: 0.14em 0.1em;
-  margin-block: -0.14em -0.1em;
+  padding-block: 0.14em 0.12em;
+  margin-block: -0.14em -0.12em;
 }
 
 /* Intro : masquée si déjà jouée pendant la visite (classe posée avant affichage) */
@@ -223,56 +267,48 @@ html.intro-done #intro-loader {
  * Sans JavaScript ou avec le mouvement réduit, tout est simplement affiché.
  */
 .anim [data-split],
-.anim [data-fade] {
+.anim [data-fade],
+.anim [data-pop] {
   opacity: 0;
 }
-.anim.no-intro [data-frame] {
-  clip-path: inset(22% 16% 22% 16%);
-}
 
-/* Photographies révélées par masque à leur entrée dans l'écran (voir RevealImage) */
+/* Photographies révélées par masque arrondi à leur entrée dans l'écran (voir RevealImage) */
 .anim [data-reveal="up"] {
-  clip-path: inset(100% 0% 0% 0%);
-}
-.anim [data-reveal="down"] {
-  clip-path: inset(0% 0% 100% 0%);
+  clip-path: inset(100% 0% 0% 0% round var(--r, 2rem));
 }
 .anim [data-reveal="left"] {
-  clip-path: inset(0% 100% 0% 0%);
+  clip-path: inset(0% 100% 0% 0% round var(--r, 2rem));
 }
 .anim [data-reveal="right"] {
-  clip-path: inset(0% 0% 0% 100%);
+  clip-path: inset(0% 0% 0% 100% round var(--r, 2rem));
+}
+.anim [data-reveal="pill"] {
+  clip-path: inset(32% 28% 32% 28% round 999px);
 }
 .anim [data-reveal="circle"] {
   clip-path: circle(0% at 50% 55%);
 }
-.anim [data-reveal="arch"] {
-  clip-path: inset(100% 0% 0% 0% round 50% 50% 0 0);
-}
 .anim [data-reveal] img {
-  transform: scale(1.18);
+  transform: scale(1.2);
 }
 .anim [data-reveal][data-in] {
-  clip-path: inset(0% 0% 0% 0%);
-  transition: clip-path 1.4s var(--ease-reveal) var(--reveal-delay, 0s);
+  clip-path: inset(0% 0% 0% 0% round var(--r, 2rem));
+  transition: clip-path 1.5s var(--ease-reveal) var(--reveal-delay, 0s);
 }
 .anim [data-reveal="circle"][data-in] {
   clip-path: circle(75% at 50% 50%);
 }
-.anim [data-reveal="arch"][data-in] {
-  clip-path: inset(0% 0% 0% 0% round 50% 50% 0 0);
-}
 .anim [data-reveal][data-in] img {
   transform: none;
   transition:
-    transform 1.8s var(--ease-reveal) var(--reveal-delay, 0s),
+    transform 1.9s var(--ease-reveal) var(--reveal-delay, 0s),
     scale 1.2s var(--ease-luxe);
 }
 
-/* Barre d'actions mobile : réserver l'espace en bas */
+/* Barre d'actions mobile flottante : réserver l'espace en bas */
 @media (max-width: 1023px) {
   body {
-    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
   }
 }
 
@@ -285,15 +321,100 @@ html.intro-done #intro-loader {
   display: none;
 }
 
-/* Grain photographique très léger sur les sections bleues */
+/* Grain photographique très léger sur les aplats de couleur */
 .grain::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.06;
+  opacity: 0.07;
+  border-radius: inherit;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
+}
+
+/* ------------------------------ Mouvements continus ------------------------------
+   Propriétés individuelles (translate, rotate) : GSAP garde la main sur `transform`. */
+@keyframes blob-a {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+  33% {
+    translate: 7vw -5vh;
+    scale: 1.12;
+  }
+  66% {
+    translate: -5vw 4vh;
+    scale: 0.92;
+  }
+}
+@keyframes blob-b {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+  40% {
+    translate: -8vw 6vh;
+    scale: 0.9;
+  }
+  75% {
+    translate: 4vw -3vh;
+    scale: 1.1;
+  }
+}
+@keyframes bob {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: var(--rot, 0deg);
+  }
+  50% {
+    translate: 0 -14px;
+    rotate: calc(var(--rot, 0deg) + 5deg);
+  }
+}
+@keyframes spin-slow {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes marquee {
+  to {
+    translate: -50% 0;
+  }
+}
+@keyframes ping-soft {
+  0% {
+    scale: 1;
+    opacity: 0.55;
+  }
+  100% {
+    scale: 2.6;
+    opacity: 0;
+  }
+}
+
+.animate-blob-a {
+  animation: blob-a 22s ease-in-out infinite;
+}
+.animate-blob-b {
+  animation: blob-b 26s ease-in-out infinite;
+}
+.animate-bob {
+  animation: bob var(--bob-d, 6s) ease-in-out infinite;
+  animation-delay: var(--bob-delay, 0s);
+}
+.animate-spin-slow {
+  animation: spin-slow var(--spin-d, 22s) linear infinite;
+}
+.animate-marquee {
+  animation: marquee var(--marquee-d, 40s) linear infinite;
+}
+.animate-ping-soft {
+  animation: ping-soft 2.2s var(--ease-luxe) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -304,15 +425,5 @@ html.intro-done #intro-loader {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-}
-
-@keyframes scroll-cue {
-  0% {
-    transform: translateY(-100%);
-  }
-  60%,
-  100% {
-    transform: translateY(260%);
   }
 }
