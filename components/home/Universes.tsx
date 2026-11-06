@@ -4,7 +4,6 @@ import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
 import { TransitionLink } from "@/components/animations/PageTransition";
 import { SplitReveal } from "@/components/animations/Reveal";
-import { Chip } from "@/components/ui/Decor";
 import { Photo } from "@/components/ui/Photo";
 import type { ImageKey } from "@/data/images";
 import { gsap, MQ, useGSAP } from "@/lib/gsap";
@@ -103,11 +102,10 @@ export function Universes() {
   );
 
   return (
-    <section ref={root} id="nos-univers" aria-labelledby="univers-titre" className="relative scroll-mt-8 bg-cream pb-20 pt-6 lg:pb-32">
+    <section ref={root} id="nos-univers" aria-labelledby="univers-titre" className="relative scroll-mt-8 bg-cream pb-20 pt-16 lg:pb-32 lg:pt-24">
       <div className="container-x grid items-end gap-6 pb-10 lg:grid-cols-12 lg:pb-16">
         <div className="lg:col-span-7">
-          <Chip dot="framboise">Nos univers</Chip>
-          <SplitReveal as="h2" id="univers-titre" className="t-h1 mt-5 max-w-[15ch] text-blue-deep">
+          <SplitReveal as="h2" id="univers-titre" className="t-h1 max-w-[15ch] text-blue-deep">
             De quoi passer nous voir à toute heure.
           </SplitReveal>
         </div>

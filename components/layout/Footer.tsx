@@ -2,7 +2,7 @@ import { Navigation, Phone } from "lucide-react";
 import { TransitionLink } from "@/components/animations/PageTransition";
 import { RevealImage } from "@/components/animations/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
-import { Chip, Glow } from "@/components/ui/Decor";
+import { Glow } from "@/components/ui/Decor";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { groupedHours } from "@/lib/hours";
 import { fullAddress, mapsDirectionsUrl, navigation, siteConfig, telHref } from "@/lib/site.config";
@@ -18,10 +18,7 @@ export function Footer() {
       <div className="container-x relative pt-16 lg:pt-24">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-7">
-            <Chip tone="dark" dot="citron">
-              Rantigny, Oise
-            </Chip>
-            <p className="t-h1 mt-6 max-w-[16ch] text-balance">Une boulangerie de quartier, rue Anatole France.</p>
+            <p className="t-h1 max-w-[16ch] text-balance">Une boulangerie de quartier, rue Anatole France.</p>
             <a href={mapsDirectionsUrl} target="_blank" rel="noopener noreferrer" className="mt-6 inline-block text-ivory/85 link-draw">
               {fullAddress}
             </a>

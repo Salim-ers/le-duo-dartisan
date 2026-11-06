@@ -4,9 +4,8 @@ import { Phone } from "lucide-react";
 import { useRef, type CSSProperties } from "react";
 import { FadeIn, SplitReveal } from "@/components/animations/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
-import { Chip, Glow, Macaron, RotatingBadge } from "@/components/ui/Decor";
+import { Glow, Macaron, RotatingBadge } from "@/components/ui/Decor";
 import { Photo } from "@/components/ui/Photo";
-import { occasions } from "@/data/order";
 import { gsap, MQ, useGSAP } from "@/lib/gsap";
 import { siteConfig, telHref } from "@/lib/site.config";
 
@@ -71,10 +70,7 @@ export function EventSection() {
         <Glow variant="blue" className="-z-10 opacity-50" />
         <div className="container-x grid items-center gap-14 py-20 lg:grid-cols-12 lg:gap-8 lg:py-32">
           <div className="lg:col-span-6">
-            <Chip tone="dark" dot="citron">
-              Sur mesure
-            </Chip>
-            <SplitReveal as="h2" id="sur-mesure" className="t-h1 mt-6 max-w-[15ch]">
+            <SplitReveal as="h2" id="sur-mesure" className="t-h1 max-w-[15ch]">
               Vos plus belles occasions méritent une création unique.
             </SplitReveal>
             <FadeIn>
@@ -82,15 +78,6 @@ export function EventSection() {
                 Number cakes, gâteaux aux fruits ou assortiments pour une réception : décrivez votre idée, nous revenons
                 vers vous pour la construire ensemble.
               </p>
-            </FadeIn>
-            <FadeIn as="ul" stagger={0.05} className="mt-8 flex flex-wrap gap-2" y={16}>
-              {occasions
-                .filter((o) => o.id !== "autre")
-                .map((o) => (
-                  <li key={o.id} className="rounded-full bg-ivory/[0.08] px-4 py-2 text-[0.92rem] font-medium ring-1 ring-ivory/15">
-                    {o.label}
-                  </li>
-                ))}
             </FadeIn>
             <FadeIn className="mt-10 flex flex-wrap gap-3">
               <ButtonLink href="/gateaux-sur-mesure" variant="light" arrow>

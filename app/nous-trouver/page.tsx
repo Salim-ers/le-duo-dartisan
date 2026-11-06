@@ -2,7 +2,7 @@ import { MapPin, Navigation, Phone } from "lucide-react";
 import { FadeIn, RevealImage, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ButtonLink } from "@/components/ui/Button";
-import { Chip, Glow } from "@/components/ui/Decor";
+import { Glow } from "@/components/ui/Decor";
 import { HoursTable } from "@/components/ui/HoursTable";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 import { MapEmbed } from "@/components/ui/MapEmbed";
@@ -44,8 +44,7 @@ export default function FindUsPage() {
 
       <section className="container-x grid gap-3 py-12 lg:grid-cols-12 lg:gap-4 lg:py-20">
         <FadeIn className="rounded-[2rem] bg-ivory p-7 shadow-[var(--shadow-soft)] ring-1 ring-line sm:rounded-[2.5rem] sm:p-10 lg:col-span-6 lg:p-12">
-          <Chip dot="framboise">La boutique</Chip>
-          <h2 className="t-h2 mt-5 text-blue-deep">{siteConfig.name}</h2>
+          <h2 className="t-h2 text-blue-deep">{siteConfig.name}</h2>
           <address className="mt-5 not-italic">
             <span className="t-lead block text-ink/85">
               {a.street}

@@ -1,5 +1,5 @@
 import { ButtonLink } from "@/components/ui/Button";
-import { Chip, Glow, Macaron } from "@/components/ui/Decor";
+import { Glow, Macaron } from "@/components/ui/Decor";
 
 export default function NotFound() {
   return (
@@ -13,11 +13,10 @@ export default function NotFound() {
           </span>
           4
         </p>
-        <Chip dot="citron" className="mt-6">
-          Page introuvable
-        </Chip>
-        <h1 className="t-h1 mt-5 max-w-[16ch] text-blue-deep">Cette page n’est pas sortie du four.</h1>
-        <p className="t-lead mt-6 max-w-md text-ink/80">L’adresse a peut-être changé. Retrouvez nos créations ou revenez à l’accueil.</p>
+        <h1 className="t-h1 mt-6 max-w-[16ch] text-blue-deep">Cette page n’est pas sortie du four.</h1>
+        <p className="t-lead mt-6 max-w-md text-ink/80">
+          Page introuvable : l’adresse a peut-être changé. Retrouvez nos créations ou revenez à l’accueil.
+        </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <ButtonLink href="/" arrow>
             Retour à l’accueil

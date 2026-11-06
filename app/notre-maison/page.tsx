@@ -3,7 +3,7 @@ import { FadeIn, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { MaisonChapters } from "@/components/maison/MaisonChapters";
 import { ButtonLink } from "@/components/ui/Button";
-import { Chip, Glow, RotatingBadge } from "@/components/ui/Decor";
+import { Glow, RotatingBadge } from "@/components/ui/Decor";
 import { Photo } from "@/components/ui/Photo";
 import { pageMetadata } from "@/lib/seo";
 
@@ -53,10 +53,7 @@ export default function MaisonPage() {
           <Glow variant="blue" className="-z-10 opacity-50" />
           <div className="container-x relative flex flex-col items-start justify-between gap-10 lg:flex-row lg:items-end">
             <div>
-              <Chip tone="dark" dot="citron">
-                Rue Anatole France
-              </Chip>
-              <SplitReveal as="h2" className="t-h1 mt-6 max-w-[14ch]">
+              <SplitReveal as="h2" className="t-h1 max-w-[14ch]">
                 Passez nous voir, la porte est ouverte.
               </SplitReveal>
               <FadeIn>

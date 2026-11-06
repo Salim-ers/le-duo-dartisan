@@ -21,7 +21,8 @@ Site vitrine statique (Next.js 16 App Router, React 19, TypeScript strict, Tailw
 
 - Jetons dans `styles/globals.css` : bleu de façade, crème, framboise, pistache, citron. Titres en Fraunces avec `font-variation-settings: "SOFT" 100` (utilitaires `t-mega`, `t-hero`, `t-h1`…).
 - Tout est arrondi : boutons et en-tête en pastille (`rounded-full`), cartes `rounded-[1.75rem]` à `rounded-[2.5rem]`, sections bleues `rounded-[2.5rem] lg:rounded-[4rem]`, arches (`rounded-arch`). Ne pas réintroduire d'angles vifs.
-- Décor partagé dans `components/ui/Decor.tsx` (Chip, Macaron, RotatingBadge, Glow) ; boutons dans `components/ui/Button.tsx` (`variant`, `size`, `arrow`).
+- Décor partagé dans `components/ui/Decor.tsx` (Macaron, RotatingBadge, Glow) ; boutons dans `components/ui/Button.tsx` (`variant`, `size`, `arrow`).
+- Pas d’effets « template IA » : pas d’étiquette en pastille au-dessus des titres, pas de ruban de mots qui défile, pas de texte qui s’allume mot à mot, pas de nuage d’étiquettes. Un titre se suffit à lui-même ; les vraies photos de la boutique priment sur le décor.
 - Chaque page garde sa personnalité : ne pas recopier une section d'une page à l'autre.
 
 ## Animations : règles qui évitent les bugs

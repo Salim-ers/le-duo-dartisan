@@ -18,7 +18,7 @@ Node.js 20.9 ou plus récent.
 
 | Page | Route | Personnalité |
 |---|---|---|
-| Accueil | `/` | Enseigne qui s’écrit puis se relève comme un store, titre où la photo du fraisier est sertie puis s’ouvre en grande fenêtre, rubans de spécialités, cartes d’univers qui s’empilent, phrase qui s’allume mot à mot avec photos rondes, number cake dans un anneau de texte, plan stylisé |
+| Accueil | `/` | Enseigne qui s’écrit puis se relève comme un store, titre où la photo du fraisier est sertie puis s’ouvre en grande fenêtre, cartes d’univers qui s’empilent, la vraie photo du pétrin, number cake dans un anneau de texte, plan stylisé |
 | Nos créations | `/nos-creations` | Uniquement le catalogue : filtres (`?categorie=pains`…), fiches produit, plein écran |
 | Gâteaux sur mesure | `/gateaux-sur-mesure` | Uniquement la commande : configurateur en 5 étapes, envoi Formspree |
 | Notre maison | `/notre-maison` | Le métier en 4 chapitres (le geste, la pâte, la cuisson, le détail), image collée qui change au défilement |
@@ -98,7 +98,7 @@ Protection : champ pot de miel (`_gotcha`), validation Zod côté client, filtra
 - Polices auto-hébergées (Fraunces avec l’axe SOFT pour les titres, Manrope pour le texte) : aucune requête vers Google Fonts.
 - Logo : vectorisé depuis le fichier fourni (`public/logo-le-duo-dartisans.svg`, tracé dans `lib/logo-path.ts`).
 
-**Direction artistique « La vitrine en couleurs »** : le bleu de la façade et la crème des menuiseries pour la base, la framboise, la pistache et le citron des vitrines pour les accents (jetons dans `styles/globals.css`). Tout est arrondi : en-tête et boutons en pastille, cartes de 28 à 56 px d’arrondi, sections bleues aux coins arrondis, arches. Motif signature : des photos rondes serties dans les titres, comme des gâteaux dans une vitrine. Éléments décoratifs partagés (pastille, macaron, badge au texte tournant, halos de couleur) : `components/ui/Decor.tsx`.
+**Direction artistique « La vitrine en couleurs »** : le bleu de la façade et la crème des menuiseries pour la base, la framboise, la pistache et le citron des vitrines pour les accents (jetons dans `styles/globals.css`). Tout est arrondi : en-tête et boutons en pastille, cartes de 28 à 56 px d’arrondi, sections bleues aux coins arrondis, arches. Motif signature : la photo du fraisier sertie dans le titre d’accueil, comme un gâteau dans une vitrine. Éléments décoratifs partagés (macaron, badge au texte tournant, halos de couleur) : `components/ui/Decor.tsx`. À éviter, car perçu comme « fait par une IA » : étiquettes en pastille au-dessus des titres, rubans de mots qui défilent, texte qui s’allume mot à mot, nuages d’étiquettes.
 
 **Animations** : le motion design fait partie de l’identité du site. L’intro se joue une fois par visite et peut être passée (bouton, clic ou Échap). Entre les pages, une vague bleue aux bords arrondis. `prefers-reduced-motion` est respecté partout.
 

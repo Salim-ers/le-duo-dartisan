@@ -3,40 +3,6 @@ import { cn } from "@/lib/utils";
 
 export type Flavour = "framboise" | "pistache" | "citron" | "blue" | "caramel";
 
-const DOT: Record<Flavour, string> = {
-  framboise: "bg-framboise",
-  pistache: "bg-pistache",
-  citron: "bg-citron",
-  blue: "bg-blue",
-  caramel: "bg-caramel",
-};
-
-/** Étiquette en pastille avec sa pastille de couleur. */
-export function Chip({
-  children,
-  dot = "framboise",
-  tone = "light",
-  className,
-}: {
-  children: ReactNode;
-  dot?: Flavour;
-  tone?: "light" | "dark";
-  className?: string;
-}) {
-  return (
-    <span
-      className={cn(
-        "chip",
-        tone === "light" ? "bg-ivory/75 text-blue-deep ring-1 ring-line backdrop-blur-sm" : "bg-ivory/10 text-ivory ring-1 ring-ivory/20",
-        className,
-      )}
-    >
-      <span aria-hidden="true" className={cn("size-2.5 rounded-full", DOT[dot])} />
-      {children}
-    </span>
-  );
-}
-
 const SHELL: Record<Flavour, [string, string]> = {
   framboise: ["#ec6d8f", "#d94a72"],
   pistache: ["#b2cd73", "#93b04f"],

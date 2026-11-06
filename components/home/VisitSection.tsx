@@ -4,16 +4,13 @@ import { ArrowUpRight, MapPin, Navigation, Phone } from "lucide-react";
 import { useRef } from "react";
 import { FadeIn, SplitReveal } from "@/components/animations/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
-import { Chip } from "@/components/ui/Decor";
 import { TodayHours } from "@/components/ui/TodayHours";
 import { gsap, MQ, useGSAP } from "@/lib/gsap";
 import { fullAddress, mapsDirectionsUrl, siteConfig, telHref } from "@/lib/site.config";
 
-const LOOP = "Rue Anatole France · Rantigny · ";
-
 /**
- * Dernier appel : l'adresse défile en très grand derrière deux cartes arrondies,
- * l'une pour les coordonnées, l'autre pour l'itinéraire (plan stylisé, sans service tiers).
+ * Dernier appel : deux cartes arrondies, l'une pour les coordonnées,
+ * l'autre pour l'itinéraire (plan stylisé, sans service tiers).
  * La photo de la boutique reste sur « Nous trouver ».
  */
 export function VisitSection() {
@@ -23,11 +20,6 @@ export function VisitSection() {
     () => {
       const mm = gsap.matchMedia();
       mm.add(MQ.motion, () => {
-        gsap.fromTo(
-          "[data-marquee]",
-          { xPercent: 0 },
-          { xPercent: -30, ease: "none", scrollTrigger: { trigger: root.current, start: "top bottom", end: "bottom top", scrub: 1 } },
-        );
         gsap.fromTo(
           "[data-pin]",
           { y: -60, scale: 0.4, autoAlpha: 0 },
@@ -48,13 +40,9 @@ export function VisitSection() {
 
   return (
     <section ref={root} aria-labelledby="rencontrer" className="relative overflow-hidden bg-cream pb-24 pt-20 lg:pb-36 lg:pt-28">
-      <p data-marquee aria-hidden="true" className="t-mega pointer-events-none whitespace-nowrap text-blue-deep/[0.07]">
-        {LOOP.repeat(4)}
-      </p>
-      <div className="container-x relative -mt-[4vw] grid gap-3 lg:grid-cols-12 lg:gap-4">
+      <div className="container-x relative grid gap-3 lg:grid-cols-12 lg:gap-4">
         <div className="rounded-[2rem] bg-ivory p-7 shadow-[var(--shadow-soft)] ring-1 ring-line sm:rounded-[2.5rem] sm:p-10 lg:col-span-7 lg:p-14">
-          <Chip dot="blue">Nous rendre visite</Chip>
-          <SplitReveal as="h2" id="rencontrer" className="t-h1 mt-6 text-blue-deep">
+          <SplitReveal as="h2" id="rencontrer" className="t-h1 text-blue-deep">
             Venez nous rencontrer.
           </SplitReveal>
           <FadeIn>

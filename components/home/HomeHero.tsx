@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils";
 
 /** Macarons décoratifs : position, taille, profondeur de parallaxe, inclinaison. */
 const MACARONS: { flavour: Flavour; className: string; depth: number; rot: number; bob: string }[] = [
-  { flavour: "framboise", className: "left-[5%] top-[17%] w-[clamp(58px,7.5vw,128px)] lg:left-[8%] lg:top-[24%]", depth: 1.2, rot: -14, bob: "6.5s" },
-  { flavour: "pistache", className: "right-[5%] top-[21%] w-[clamp(50px,6.2vw,108px)] lg:right-[9%] lg:top-[30%]", depth: 0.8, rot: 12, bob: "7.2s" },
+  { flavour: "framboise", className: "left-[5%] top-[13%] w-[clamp(58px,7.5vw,128px)] lg:left-[8%] lg:top-[24%]", depth: 1.2, rot: -14, bob: "6.5s" },
+  { flavour: "pistache", className: "right-[5%] top-[15%] w-[clamp(50px,6.2vw,108px)] lg:right-[9%] lg:top-[30%]", depth: 0.8, rot: 12, bob: "7.2s" },
   { flavour: "citron", className: "bottom-[19%] left-[8%] w-[clamp(44px,5vw,88px)] lg:bottom-[16%] lg:left-[15%]", depth: 1.6, rot: 9, bob: "5.8s" },
   { flavour: "blue", className: "bottom-[24%] right-[9%] w-[clamp(38px,4.2vw,74px)] lg:bottom-auto lg:right-[27%] lg:top-[14%]", depth: 0.6, rot: -8, bob: "6.9s" },
 ];
@@ -199,15 +199,10 @@ export function HomeHero() {
 
         <div data-copy className="container-x relative flex flex-col items-center text-center">
           <h1 id="accueil-titre" data-split className="text-blue-deep">
-            <span data-fade className="chip bg-ivory/80 text-blue-deep ring-1 ring-line backdrop-blur-sm">
-              <span aria-hidden="true" className="flex -space-x-1">
-                <span className="size-2.5 rounded-full bg-framboise ring-2 ring-ivory" />
-                <span className="size-2.5 rounded-full bg-citron ring-2 ring-ivory" />
-                <span className="size-2.5 rounded-full bg-pistache ring-2 ring-ivory" />
-              </span>
+            <span data-fade className="block text-[0.98rem] font-semibold text-blue-deep/80 lg:text-[1.08rem]">
               Boulangerie-pâtisserie à Rantigny
             </span>
-            <span className="mt-7 block font-display text-[clamp(2.6rem,12vw,5.6rem)] lg:text-[clamp(5rem,8.6vw,9.4rem)] font-[420] leading-[0.98] tracking-[-0.035em] [font-variation-settings:'SOFT'_100] lg:mt-9">
+            <span className="mt-5 block font-display text-[clamp(2.6rem,12vw,5.6rem)] lg:text-[clamp(5rem,8.6vw,9.4rem)] font-[420] leading-[0.98] tracking-[-0.035em] [font-variation-settings:'SOFT'_100] lg:mt-9">
               <span className="block">
                 <Word>Le</Word> <Word>goût</Word>{" "}
                 <span
@@ -266,10 +261,10 @@ export function HomeHero() {
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(11_39_56/0)_30%,rgb(11_39_56/0.82)_100%),linear-gradient(90deg,rgb(11_39_56/0.45),rgb(11_39_56/0)_55%)]" />
           <div data-window-copy className="on-dark absolute inset-x-0 bottom-0 flex items-end justify-between gap-10 p-[3.2vw] text-ivory">
             <p className="t-hero max-w-[12ch]">
-              Du pétrin à la vitrine, <em className="text-citron">le soin du détail.</em>
+              Le fraisier, <em className="text-citron">pour vos grandes occasions.</em>
             </p>
             <p className="max-w-xs pb-2 text-[1.02rem] text-ivory/85">
-              Notre grand fraisier aux fruits frais, l’une des créations à commander pour vos occasions.
+              Il se commande à l’avance, comme nos autres gâteaux sur mesure : la boutique vous rappelle pour fixer les détails.
             </p>
           </div>
         </div>

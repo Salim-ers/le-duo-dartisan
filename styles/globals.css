@@ -182,19 +182,6 @@
   line-height: 1.5;
 }
 
-/* Étiquette en pastille, avec sa pastille de couleur (voir components/ui/Chip) */
-@utility chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  border-radius: 999px;
-  padding: 0.5rem 1rem 0.5rem 0.75rem;
-  font-size: 0.84rem;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.01em;
-}
-
 @utility container-x {
   width: 100%;
   margin-inline: auto;
@@ -381,11 +368,6 @@ html.intro-done #intro-loader {
     rotate: 360deg;
   }
 }
-@keyframes marquee {
-  to {
-    translate: -50% 0;
-  }
-}
 @keyframes ping-soft {
   0% {
     scale: 1;
@@ -409,9 +391,6 @@ html.intro-done #intro-loader {
 }
 .animate-spin-slow {
   animation: spin-slow var(--spin-d, 22s) linear infinite;
-}
-.animate-marquee {
-  animation: marquee var(--marquee-d, 40s) linear infinite;
 }
 .animate-ping-soft {
   animation: ping-soft 2.2s var(--ease-luxe) infinite;

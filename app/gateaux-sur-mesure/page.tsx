@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { FadeIn, RevealImage, SplitReveal } from "@/components/animations/Reveal";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { OrderConfigurator, OrderConfiguratorFromUrl } from "@/components/order/OrderConfigurator";
-import { Chip, Glow, Macaron } from "@/components/ui/Decor";
+import { Glow, Macaron } from "@/components/ui/Decor";
 import { Photo } from "@/components/ui/Photo";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig, telHref } from "@/lib/site.config";
@@ -33,10 +33,7 @@ export default function CustomCakePage() {
         <div className="container-x grid gap-12 pb-16 pt-8 lg:grid-cols-12 lg:gap-8 lg:pb-24 lg:pt-12">
           <div className="lg:col-span-7">
             <Breadcrumbs items={[{ name: "Gâteaux sur mesure", path: "/gateaux-sur-mesure" }]} />
-            <Chip dot="framboise" className="mt-10">
-              Sur mesure
-            </Chip>
-            <SplitReveal as="h1" onStage className="t-hero mt-6 max-w-[13ch] text-blue-deep">
+            <SplitReveal as="h1" onStage className="t-hero mt-10 max-w-[13ch] text-blue-deep">
               Votre gâteau, <em className="text-blue">imaginé avec vous.</em>
             </SplitReveal>
             <FadeIn onStage delay={0.3}>
