@@ -41,7 +41,10 @@ export function Photo({
         alt={decorative ? "" : img.alt}
         fill
         sizes={sizes}
-        preload={preload}
+        // Image principale : chargée tout de suite et en priorité (recommandation Next 16
+        // pour l'élément LCP, plutôt qu'un préchargement séparé dans le <head>).
+        loading={preload ? "eager" : "lazy"}
+        fetchPriority={preload ? "high" : undefined}
         quality={75}
         placeholder="blur"
         className={cn(contain ? "object-contain" : "object-cover", imgClassName)}

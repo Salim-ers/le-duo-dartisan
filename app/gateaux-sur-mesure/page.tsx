@@ -16,7 +16,7 @@ export const metadata = pageMetadata({
 });
 
 const process = [
-  { title: "Vous décrivez votre envie", text: "L’occasion, le nombre de parts, la date et vos idées de saveurs ou de décor.", tone: "bg-framboise text-ivory" },
+  { title: "Vous décrivez votre envie", text: "L’occasion, le nombre de parts, la date et vos idées de saveurs ou de décor.", tone: "bg-framboise-deep text-ivory" },
   { title: "Nous vous recontactons", text: "La boutique vérifie la faisabilité et la date, puis vous confirme le tarif.", tone: "bg-citron text-cacao" },
   {
     title: "Vous retirez votre gâteau",

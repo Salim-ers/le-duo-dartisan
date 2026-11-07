@@ -31,7 +31,7 @@ const chapters: { title: string; text: string; image: ImageKey; tone: string }[]
     title: "Le détail",
     text: "Chaque pièce dressée avec soin, parce que la gourmandise commence par les yeux.",
     image: "dressageFraises",
-    tone: "bg-framboise text-ivory",
+    tone: "bg-framboise-deep text-ivory",
   },
 ];
 

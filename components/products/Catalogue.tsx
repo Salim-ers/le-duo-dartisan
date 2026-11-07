@@ -2,8 +2,8 @@
 
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { Plus } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useMemo, useRef, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { memo, Suspense, useMemo, useRef, useState } from "react";
 import { RevealImage } from "@/components/animations/Reveal";
 import { Photo } from "@/components/ui/Photo";
 import { Lightbox } from "@/components/ui/Lightbox";
@@ -39,8 +39,67 @@ export function Catalogue() {
   );
 }
 
+/**
+ * Grille des créations, mémorisée : ouvrir une fiche ou la visionneuse ne la re-rend pas
+ * (sinon Motion remesure toutes les cartes animées à chaque ouverture).
+ */
+const ProductGrid = memo(function ProductGrid({ list, onSelect }: { list: Product[]; onSelect: (p: Product) => void }) {
+  return (
+    <motion.ul layout="position" className="grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-7 lg:gap-y-16">
+      <AnimatePresence mode="popLayout" initial={false}>
+        {list.map((p, i) => (
+          <motion.li
+            key={p.id}
+            layout="position"
+            initial={{ opacity: 0, y: 60, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease, delay: Math.min(i, 6) * 0.06 } }}
+            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
+          >
+            <button
+              type="button"
+              onClick={() => onSelect(p)}
+              className="group block w-full rounded-[1.75rem] text-left"
+              aria-haspopup="dialog"
+            >
+              {/* Même format partout ; l'apparition part en vague, colonne après colonne.
+                  L'ombre est sur l'enveloppe : le masque de révélation la couperait. */}
+              <span className="block rounded-[1.75rem] transition-[translate,box-shadow] duration-700 ease-[var(--ease-luxe)] group-hover:-translate-y-1.5 group-hover:shadow-[0_34px_60px_-30px_rgb(18_61_88/0.6)]">
+              <RevealImage delay={(i % 3) * 0.12} radius="1.75rem" className="aspect-square rounded-[1.75rem] bg-paper">
+                <Photo
+                  name={p.image}
+                  sizes="(min-width: 1024px) 32vw, (min-width: 640px) 48vw, calc(100vw - 2rem)"
+                  imgClassName="transition-[scale] duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.07]"
+                  // Première carte : image principale de la page sur mobile (LCP), jamais en différé.
+                  preload={i === 0}
+                />
+                <span className="absolute left-3 top-3 flex items-center gap-2 rounded-full bg-ivory/90 py-1.5 pl-2.5 pr-3.5 text-[0.78rem] font-semibold text-blue-deep backdrop-blur-sm">
+                  <span aria-hidden="true" className={cn("size-2 rounded-full", TONE[p.category])} />
+                  {categories.find((c) => c.id === p.category)?.short}
+                </span>
+                {p.customizable && (
+                  <span className="absolute right-3 top-3 rounded-full bg-framboise-deep px-3 py-1.5 text-[0.78rem] font-semibold text-ivory">
+                    Personnalisable
+                  </span>
+                )}
+                <span
+                  aria-hidden="true"
+                  className="absolute bottom-3 right-3 grid size-12 place-items-center rounded-full bg-ivory text-blue-deep shadow-[0_10px_20px_-8px_rgb(0_0_0/0.35)] transition-[background-color,color,rotate,scale] duration-500 ease-[var(--ease-spring)] group-hover:rotate-90 group-hover:scale-110 group-hover:bg-blue-deep group-hover:text-ivory"
+                >
+                  <Plus className="size-5" />
+                </span>
+              </RevealImage>
+              </span>
+              <h2 className="t-h3 mt-5 px-1 text-blue-deep">{p.name}</h2>
+              <p className="mt-2 max-w-[46ch] px-1 text-[0.95rem] leading-relaxed text-ink/70">{p.description}</p>
+            </button>
+          </motion.li>
+        ))}
+      </AnimatePresence>
+    </motion.ul>
+  );
+});
+
 function CatalogueView({ active }: { active: CategoryId | "tout" }) {
-  const router = useRouter();
   const pathname = usePathname();
   const top = useRef<HTMLDivElement>(null);
 
@@ -50,7 +109,9 @@ function CatalogueView({ active }: { active: CategoryId | "tout" }) {
   const list = useMemo(() => (active === "tout" ? products : products.filter((p) => p.category === active)), [active]);
 
   const setCategory = (id: CategoryId | "tout") => {
-    router.replace(id === "tout" ? pathname : `${pathname}?categorie=${id}`, { scroll: false });
+    // API d'historique native : Next la synchronise avec useSearchParams, sans requête
+    // au serveur (router.replace rechargeait la page côté serveur à chaque filtre).
+    window.history.replaceState(null, "", id === "tout" ? pathname : `${pathname}?categorie=${id}`);
     // Si l'on a défilé dans la liste, on revient à son début : la nouvelle liste peut être bien plus courte.
     const el = top.current;
     if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView();
@@ -114,55 +175,7 @@ function CatalogueView({ active }: { active: CategoryId | "tout" }) {
         <p className="sr-only">
           {list.length} création{list.length > 1 ? "s" : ""} affichée{list.length > 1 ? "s" : ""}
         </p>
-        <motion.ul layout="position" className="grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-7 lg:gap-y-16">
-          <AnimatePresence mode="popLayout" initial={false}>
-            {list.map((p, i) => (
-              <motion.li
-                key={p.id}
-                layout="position"
-                initial={{ opacity: 0, y: 60, scale: 0.94 }}
-                animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease, delay: Math.min(i, 6) * 0.06 } }}
-                exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.3 } }}
-              >
-                <button
-                  type="button"
-                  onClick={() => setSelected(p)}
-                  className="group block w-full rounded-[1.75rem] text-left"
-                  aria-haspopup="dialog"
-                >
-                  {/* Même format partout ; l'apparition part en vague, colonne après colonne.
-                      L'ombre est sur l'enveloppe : le masque de révélation la couperait. */}
-                  <span className="block rounded-[1.75rem] transition-[translate,box-shadow] duration-700 ease-[var(--ease-luxe)] group-hover:-translate-y-1.5 group-hover:shadow-[0_34px_60px_-30px_rgb(18_61_88/0.6)]">
-                  <RevealImage delay={(i % 3) * 0.12} radius="1.75rem" className="aspect-square rounded-[1.75rem] bg-paper">
-                    <Photo
-                      name={p.image}
-                      sizes="(min-width: 1024px) 32vw, (min-width: 640px) 48vw, 100vw"
-                      imgClassName="transition-[scale] duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.07]"
-                    />
-                    <span className="absolute left-3 top-3 flex items-center gap-2 rounded-full bg-ivory/90 py-1.5 pl-2.5 pr-3.5 text-[0.78rem] font-semibold text-blue-deep backdrop-blur-sm">
-                      <span aria-hidden="true" className={cn("size-2 rounded-full", TONE[p.category])} />
-                      {categories.find((c) => c.id === p.category)?.short}
-                    </span>
-                    {p.customizable && (
-                      <span className="absolute right-3 top-3 rounded-full bg-framboise px-3 py-1.5 text-[0.78rem] font-semibold text-ivory">
-                        Personnalisable
-                      </span>
-                    )}
-                    <span
-                      aria-hidden="true"
-                      className="absolute bottom-3 right-3 grid size-12 place-items-center rounded-full bg-ivory text-blue-deep shadow-[0_10px_20px_-8px_rgb(0_0_0/0.35)] transition-[background-color,color,rotate,scale] duration-500 ease-[var(--ease-spring)] group-hover:rotate-90 group-hover:scale-110 group-hover:bg-blue-deep group-hover:text-ivory"
-                    >
-                      <Plus className="size-5" />
-                    </span>
-                  </RevealImage>
-                  </span>
-                  <h2 className="t-h3 mt-5 px-1 text-blue-deep">{p.name}</h2>
-                  <p className="mt-2 max-w-[46ch] px-1 text-[0.95rem] leading-relaxed text-ink/70">{p.description}</p>
-                </button>
-              </motion.li>
-            ))}
-          </AnimatePresence>
-        </motion.ul>
+        <ProductGrid list={list} onSelect={setSelected} />
 
         {list.length === 0 && (
           <div className="mx-auto max-w-md rounded-[2rem] bg-ivory py-16 text-center ring-1 ring-line">

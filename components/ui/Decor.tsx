@@ -66,18 +66,63 @@ export function RotatingBadge({
   );
 }
 
-/** Halos de couleur flous qui dérivent lentement derrière un contenu. */
+type Halo = {
+  /** Couleur en « r g b » et opacité au centre. */
+  rgb: string;
+  alpha: number;
+  /** Diamètre du disque coloré, en vmax. */
+  size: number;
+  /** Position du disque (bords du conteneur, en %). */
+  at: Partial<Record<"left" | "right" | "top" | "bottom", string>>;
+  drift: "a" | "b";
+};
+
+const HALOS: Record<"cream" | "blue", Halo[]> = {
+  cream: [
+    { rgb: "249 201 214", alpha: 0.7, size: 46, at: { left: "-10%", top: "8%" }, drift: "a" },
+    { rgb: "220 235 192", alpha: 0.7, size: 40, at: { right: "-12%", top: "-6%" }, drift: "b" },
+    { rgb: "251 231 163", alpha: 0.6, size: 38, at: { left: "22%", bottom: "-18%" }, drift: "b" },
+    { rgb: "207 227 242", alpha: 0.6, size: 26, at: { right: "8%", bottom: "4%" }, drift: "a" },
+  ],
+  blue: [
+    { rgb: "61 145 198", alpha: 0.7, size: 46, at: { left: "-10%", top: "8%" }, drift: "a" },
+    { rgb: "228 87 125", alpha: 0.35, size: 40, at: { right: "-12%", top: "-6%" }, drift: "b" },
+    { rgb: "159 189 91", alpha: 0.24, size: 38, at: { left: "22%", bottom: "-18%" }, drift: "b" },
+    { rgb: "42 122 174", alpha: 0.6, size: 26, at: { right: "8%", bottom: "4%" }, drift: "a" },
+  ],
+};
+
+/** Le dégradé déborde du disque d'un quart de son diamètre de chaque côté, comme le ferait un flou. */
+const SPREAD = 1.5;
+
+function haloStyle(h: Halo): CSSProperties {
+  const pad = ((SPREAD - 1) / 2) * h.size;
+  const c = (a: number) => `rgb(${h.rgb} / ${+(h.alpha * a).toFixed(3)})`;
+  const style: CSSProperties = {
+    width: `${h.size * SPREAD}vmax`,
+    height: `${h.size * SPREAD}vmax`,
+    // Profil proche d'un flou gaussien : plein au centre, moitié au bord du disque, nul au-delà.
+    background: `radial-gradient(closest-side, ${c(1)} 0%, ${c(0.92)} 45%, ${c(0.5)} 67%, ${c(0.12)} 85%, ${c(0)} 100%)`,
+  };
+  for (const [side, value] of Object.entries(h.at)) {
+    (style as Record<string, string>)[side] = `calc(${value} - ${pad}vmax)`;
+  }
+  return style;
+}
+
+/**
+ * Halos de couleur qui dérivent lentement derrière un contenu.
+ * Dégradés radiaux plutôt que `filter: blur()` : même douceur, sans flou
+ * recalculé par la carte graphique à chaque image de l'animation.
+ */
 export function Glow({ className, variant = "cream" }: { className?: string; variant?: "cream" | "blue" }) {
-  const colors =
-    variant === "cream"
-      ? ["bg-[#f9c9d6]", "bg-[#dcebc0]", "bg-[#fbe7a3]", "bg-[#cfe3f2]"]
-      : ["bg-[#3d91c6]", "bg-[#e4577d]/50", "bg-[#9fbd5b]/40", "bg-[#2a7aae]"];
   return (
-    <div aria-hidden="true" className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}>
-      <div className={cn("animate-blob-a absolute -left-[10%] top-[8%] size-[46vmax] rounded-full opacity-70 blur-[90px]", colors[0])} />
-      <div className={cn("animate-blob-b absolute -right-[12%] top-[-6%] size-[40vmax] rounded-full opacity-70 blur-[90px]", colors[1])} />
-      <div className={cn("animate-blob-b absolute bottom-[-18%] left-[22%] size-[38vmax] rounded-full opacity-60 blur-[100px]", colors[2])} />
-      <div className={cn("animate-blob-a absolute bottom-[4%] right-[8%] size-[26vmax] rounded-full opacity-60 blur-[80px]", colors[3])} />
+    // content-visibility: auto : hors de l'écran, le navigateur ne rend plus les halos
+    // ni leur dérive (la section garde sa taille, les halos sont en position absolue).
+    <div aria-hidden="true" className={cn("pointer-events-none absolute inset-0 overflow-hidden [content-visibility:auto]", className)}>
+      {HALOS[variant].map((h, i) => (
+        <div key={i} className={cn("absolute", h.drift === "a" ? "animate-blob-a" : "animate-blob-b")} style={haloStyle(h)} />
+      ))}
     </div>
   );
 }

@@ -1,20 +1,20 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { AnimatePresence, motion } from "motion/react";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Navigation, Phone } from "lucide-react";
 import { TransitionLink } from "@/components/animations/PageTransition";
 import { ButtonLink } from "@/components/ui/Button";
 import { Glow } from "@/components/ui/Decor";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { fullAddress, mapsDirectionsUrl, navigation, siteConfig, telHref } from "@/lib/site.config";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
 
-const ease = [0.22, 1, 0.36, 1] as const;
 /** Centre du bouton menu : le menu mobile s'ouvre en cercle depuis ce point. */
 const MENU_ORIGIN = "calc(100% - 42px) 42px";
+const circle = (r: string) => `circle(${r} at ${MENU_ORIGIN})`;
 const DOTS = ["bg-framboise", "bg-citron", "bg-pistache", "bg-blue-bright", "bg-caramel"];
 
 function MenuIcon({ open }: { open: boolean }) {
@@ -36,26 +36,107 @@ function MenuIcon({ open }: { open: boolean }) {
   );
 }
 
+/**
+ * Animation du menu mobile : ouverture en cercle depuis le bouton, liens en cascade,
+ * fermeture inverse. Monté à l'intérieur du portail : le portail de Radix n'insère
+ * son contenu qu'au rendu suivant, l'animation doit partir de là.
+ */
+function MenuMotion({ open, onClosed }: { open: boolean; onClosed: () => void }) {
+  const marker = useRef<HTMLSpanElement>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  useGSAP(
+    () => {
+      const el = marker.current?.closest<HTMLElement>("[data-menu-panel]");
+      if (!el) return;
+      tlRef.current?.kill();
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const items = gsap.utils.toArray<HTMLElement>("[data-menu-item]", el);
+      const card = el.querySelector("[data-menu-card]");
+      const tl = gsap.timeline();
+      tlRef.current = tl;
+      if (open) {
+        if (reduce) {
+          tl.set(el, { clearProps: "clipPath" });
+          return;
+        }
+        tl.fromTo(el, { clipPath: circle("0%") }, { clipPath: circle("150%"), duration: 0.85, ease: "power3.inOut" }, 0);
+        items.forEach((it, i) =>
+          tl.fromTo(it, { autoAlpha: 0, y: 40, rotate: 2 }, { autoAlpha: 1, y: 0, rotate: 0, duration: 0.8, ease: "power4.out" }, 0.25 + i * 0.06),
+        );
+        tl.fromTo(card, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power4.out" }, 0.6);
+        // Ouverture terminée : plus de masque, rien à recalculer quand on fait défiler le menu.
+        tl.set(el, { clearProps: "clipPath" });
+        return;
+      }
+      tl.eventCallback("onComplete", onClosed);
+      if (reduce) {
+        tl.set(el, { autoAlpha: 0 });
+        return;
+      }
+      // Fermeture pendant l'ouverture : on repart du cercle en cours.
+      const from = el.style.clipPath || circle("150%");
+      tl.to([...items, card], { autoAlpha: 0, y: 20, duration: 0.2, ease: "power1.in" }, 0).fromTo(
+        el,
+        { clipPath: from },
+        { clipPath: circle("0%"), duration: 0.6, ease: "power3.inOut" },
+        0,
+      );
+    },
+    { dependencies: [open] },
+  );
+
+  return <span ref={marker} hidden />;
+}
+
 export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
-  const [hovered, setHovered] = useState<string | null>(null);
+  // Le menu reste monté pendant son animation de fermeture.
+  const [menuMounted, setMenuMounted] = useState(false);
+  if (open && !menuMounted) setMenuMounted(true);
+  const pill = useRef<HTMLSpanElement>(null);
+
+  /** Pastille de survol de la navigation : elle glisse d'un lien à l'autre (CSS, sans re-rendu). */
+  const showPill = (li: HTMLElement) => {
+    const el = pill.current;
+    if (!el) return;
+    const appearing = el.dataset.on !== "1";
+    // À la première apparition, la pastille se place sans glisser depuis l'ancien lien.
+    if (appearing) el.style.transitionProperty = "opacity";
+    el.style.width = `${li.offsetWidth}px`;
+    el.style.translate = `${li.offsetLeft}px 0`;
+    el.style.opacity = "1";
+    el.dataset.on = "1";
+    if (appearing) {
+      void el.offsetWidth;
+      el.style.transitionProperty = "";
+    }
+  };
+  const hidePill = () => {
+    const el = pill.current;
+    if (!el) return;
+    el.style.opacity = "0";
+    el.dataset.on = "0";
+  };
 
   useEffect(() => {
     let last = window.scrollY;
+    let y = last;
     let frame = 0;
     const update = () => {
       frame = 0;
-      const y = window.scrollY;
       setScrolled(y > 16);
       if (Math.abs(y - last) > 6) {
         setHidden(y > last && y > 280);
         last = y;
       }
     };
+    // Position lue dans l'événement (styles à jour), état mis à jour à l'image suivante.
     const onScroll = () => {
+      y = window.scrollY;
       if (!frame) frame = requestAnimationFrame(update);
     };
     update();
@@ -101,31 +182,27 @@ export function Header() {
           </TransitionLink>
 
           <nav aria-label="Navigation principale" className="hidden lg:block">
-            <ul className="flex items-center gap-1 whitespace-nowrap" onPointerLeave={() => setHovered(null)}>
+            <ul className="relative flex items-center gap-1 whitespace-nowrap" onPointerLeave={hidePill}>
+              <span
+                ref={pill}
+                aria-hidden="true"
+                className="pointer-events-none absolute left-0 top-0 h-full rounded-full bg-blue-soft opacity-0 transition-[translate,width,opacity] duration-[450ms] ease-[cubic-bezier(0.3,1.25,0.5,1)]"
+              />
               {navigation.map((item) => {
                 const active = pathname.startsWith(item.href);
                 return (
-                  <li key={item.href} className="relative" onPointerEnter={() => setHovered(item.href)}>
-                    {hovered === item.href && (
-                      <motion.span
-                        layoutId="nav-hover"
-                        className="absolute inset-0 rounded-full bg-blue-soft"
-                        transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                      />
-                    )}
+                  <li key={item.href} className="relative" onPointerEnter={(e) => showPill(e.currentTarget)}>
                     <TransitionLink
                       href={item.href}
                       aria-current={active ? "page" : undefined}
-                      onFocus={() => setHovered(item.href)}
-                      onBlur={() => setHovered(null)}
+                      onFocus={(e) => showPill(e.currentTarget.parentElement!)}
+                      onBlur={hidePill}
                       className={cn(
                         "relative flex items-center gap-2 rounded-full px-4 py-2.5 text-[0.93rem] transition-colors duration-300 xl:px-5",
                         active ? "font-semibold text-blue-deep" : "font-medium text-ink/75 hover:text-blue-deep",
                       )}
                     >
-                      {active && (
-                        <motion.span layoutId="nav-active" className="size-1.5 rounded-full bg-framboise" transition={{ duration: 0.5, ease }} />
-                      )}
+                      {active && <span aria-hidden="true" className="size-1.5 rounded-full bg-framboise" />}
                       {item.label}
                     </TransitionLink>
                   </li>
@@ -155,17 +232,15 @@ export function Header() {
               >
                 <MenuIcon open={false} />
               </Dialog.Trigger>
-              <AnimatePresence>
-                {open && (
-                  <Dialog.Portal forceMount>
-                    <Dialog.Content forceMount asChild aria-describedby={undefined}>
-                      <motion.div
-                        className="on-dark fixed inset-0 z-[65] flex flex-col overflow-y-auto bg-blue-deep text-ivory lg:hidden"
-                        initial={{ clipPath: `circle(0px at ${MENU_ORIGIN})` }}
-                        animate={{ clipPath: `circle(150% at ${MENU_ORIGIN})` }}
-                        exit={{ clipPath: `circle(0px at ${MENU_ORIGIN})`, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }}
-                        transition={{ duration: 0.85, ease: [0.76, 0, 0.24, 1] }}
+              {menuMounted && (
+                <Dialog.Portal forceMount>
+                  <Dialog.Content forceMount asChild aria-describedby={undefined}>
+                      <div
+                        data-menu-panel
+                        className="on-dark fixed inset-0 z-[65] flex flex-col overflow-y-auto overscroll-contain bg-blue-deep text-ivory lg:hidden"
+                        style={{ clipPath: circle("0%") }}
                       >
+                        <MenuMotion open={open} onClosed={() => setMenuMounted(false)} />
                         <Glow variant="blue" className="opacity-60" />
                         <Dialog.Title className="sr-only">Menu</Dialog.Title>
                         <div className="relative px-3 pt-3">
@@ -187,13 +262,7 @@ export function Header() {
                             {[{ href: "/", label: "Accueil" }, ...navigation].map((item, i) => {
                               const current = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
                               return (
-                                <motion.li
-                                  key={item.href}
-                                  initial={{ opacity: 0, y: 40, rotate: 2 }}
-                                  animate={{ opacity: 1, y: 0, rotate: 0 }}
-                                  exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
-                                  transition={{ duration: 0.8, delay: 0.25 + i * 0.06, ease }}
-                                >
+                                <li key={item.href} data-menu-item>
                                   <TransitionLink
                                     href={item.href}
                                     onClick={() => setOpen(false)}
@@ -213,17 +282,15 @@ export function Header() {
                                       <ArrowUpRight className="size-4" aria-hidden="true" />
                                     </span>
                                   </TransitionLink>
-                                </motion.li>
+                                </li>
                               );
                             })}
                           </ul>
                         </nav>
 
-                        <motion.div
+                        <div
+                          data-menu-card
                           className="relative mx-3 mb-[max(0.75rem,env(safe-area-inset-bottom))] rounded-[2rem] bg-ivory/[0.07] p-5 ring-1 ring-ivory/10"
-                          initial={{ opacity: 0, y: 30 }}
-                          animate={{ opacity: 1, y: 0, transition: { delay: 0.6, duration: 0.7, ease } }}
-                          exit={{ opacity: 0 }}
                         >
                           <p className="t-small text-ivory/75">{fullAddress}</p>
                           <div className="mt-4 grid grid-cols-2 gap-2">
@@ -244,12 +311,11 @@ export function Header() {
                           <ButtonLink href="/gateaux-sur-mesure" variant="light" className="mt-2 w-full" arrow onClick={() => setOpen(false)}>
                             Commander un gâteau
                           </ButtonLink>
-                        </motion.div>
-                      </motion.div>
-                    </Dialog.Content>
-                  </Dialog.Portal>
-                )}
-              </AnimatePresence>
+                        </div>
+                      </div>
+                  </Dialog.Content>
+                </Dialog.Portal>
+              )}
             </Dialog.Root>
           </div>
         </div>

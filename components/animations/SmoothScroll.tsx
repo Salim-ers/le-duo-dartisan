@@ -28,7 +28,10 @@ export function SmoothScroll() {
     lenisInstance = lenis;
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
-    gsap.ticker.add(tick);
+    // En tête de file, avant le rendu des animations GSAP : la page défile puis les
+    // animations écrivent leurs styles. Dans l'autre ordre, chaque lecture de la position
+    // de défilement forçait un recalcul complet des styles à chaque image.
+    gsap.ticker.add(tick, false, true);
     gsap.ticker.lagSmoothing(0);
 
     if (!document.documentElement.classList.contains("intro-done")) lenis.stop();

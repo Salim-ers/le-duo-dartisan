@@ -282,6 +282,14 @@ html.intro-done #intro-loader {
   clip-path: inset(0% 0% 0% 0% round var(--r, 2rem));
   transition: clip-path 1.5s var(--ease-reveal) var(--reveal-delay, 0s);
 }
+/* Photo déjà visible à l'arrivée sur le site : c'est souvent l'image principale (LCP),
+   que le navigateur ne compte comme affichée qu'une fois révélée. Révélation plus courte. */
+.anim [data-reveal][data-in][data-quick] {
+  transition-duration: 0.8s;
+}
+.anim [data-reveal][data-in][data-quick] img {
+  transition-duration: 0.9s, 1.2s;
+}
 .anim [data-reveal="circle"][data-in] {
   clip-path: circle(75% at 50% 50%);
 }

@@ -53,6 +53,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
           onComplete: () => {
             busy.current = false;
             gsap.set(el, { visibility: "hidden" });
+            delete el.dataset.active;
           },
         })
         .to(mark.current, { autoAlpha: 0, y: -24, duration: 0.3, ease: "power2.in" })
@@ -77,6 +78,8 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       setCovering(true);
       pending.current = target;
       gsap.set(panel.current, { visibility: "visible", y: window.innerHeight * 1.2 });
+      // Les points ne rebondissent que pendant la transition (pas d'animation cachée en continu).
+      panel.current.dataset.active = "";
       gsap.set(mark.current, { autoAlpha: 0, y: 24 });
       gsap
         .timeline({
@@ -98,16 +101,16 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
       <div
         ref={panel}
         aria-hidden="true"
-        className="pointer-events-none fixed inset-x-[-4vw] top-[-18vh] z-[110] h-[136vh] bg-blue [border-radius:50%/18vh]"
+        className="group pointer-events-none fixed inset-x-[-4vw] top-[-18vh] z-[110] h-[136vh] bg-blue [border-radius:50%/18vh]"
         style={{ visibility: "hidden", transform: "translateY(120vh)" }}
       >
         <div className="absolute inset-x-0 top-[18vh] grid h-[100vh] place-items-center">
           <div ref={mark} className="flex flex-col items-center gap-6 text-ivory opacity-0">
             <span className="logo-mask w-[min(64vw,360px)]" />
             <span className="flex gap-2">
-              <span className="size-2.5 animate-bounce rounded-full bg-framboise [animation-delay:-0.3s]" />
-              <span className="size-2.5 animate-bounce rounded-full bg-citron [animation-delay:-0.15s]" />
-              <span className="size-2.5 animate-bounce rounded-full bg-pistache" />
+              <span className="size-2.5 rounded-full bg-framboise [animation-delay:-0.3s] group-data-active:animate-bounce" />
+              <span className="size-2.5 rounded-full bg-citron [animation-delay:-0.15s] group-data-active:animate-bounce" />
+              <span className="size-2.5 rounded-full bg-pistache group-data-active:animate-bounce" />
             </span>
           </div>
         </div>

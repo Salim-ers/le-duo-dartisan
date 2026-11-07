@@ -47,7 +47,7 @@ const universes: {
     href: "/nos-creations?categorie=patisseries",
     cta: "Voir les pâtisseries",
     tone: "bg-rose",
-    badge: "bg-framboise text-ivory",
+    badge: "bg-framboise-deep text-ivory",
   },
   {
     n: "04",
@@ -155,7 +155,7 @@ export function Universes() {
                 <div data-card-img className="absolute -inset-y-[8%] inset-x-0">
                   <Photo
                     name={u.image}
-                    sizes="(min-width: 1024px) 50vw, 92vw"
+                    sizes="(min-width: 1024px) 50vw, calc(100vw - 3.25rem)"
                     imgClassName="transition-transform duration-[1.4s] ease-[var(--ease-luxe)] group-hover:scale-[1.05]"
                   />
                 </div>

@@ -34,12 +34,10 @@ import sandwichs from "@/public/images/snacking/sandwichs.webp";
 import flansIndividuels from "@/public/images/patisseries/flans-individuels.webp";
 import entremetsFruits from "@/public/images/patisseries/entremets-fruits.webp";
 import vitrinePatisseries from "@/public/images/vitrine/vitrine-patisseries.webp";
-import farineSurPain from "@/public/images/ambiance/farine-sur-pain.webp";
 import baguetteFondNoir from "@/public/images/ambiance/baguette-fond-noir.webp";
 import croissantsFondNoir from "@/public/images/ambiance/croissants-fond-noir.webp";
 import tarteletteFramboises from "@/public/images/ambiance/tartelette-framboises.webp";
 import sandwichBaguette from "@/public/images/ambiance/sandwich-baguette.webp";
-import champDeBleCouchant from "@/public/images/ambiance/champ-de-ble-couchant.webp";
 import gateauFleursBlanches from "@/public/images/ambiance/gateau-fleurs-blanches.webp";
 import petrissageMains from "@/public/images/ambiance/petrissage-mains.webp";
 import painsDeSeigle from "@/public/images/ambiance/pains-de-seigle.webp";
@@ -144,13 +142,6 @@ export const images = {
     "Number cake « 30 » garni de crème, de roses, de macarons, de framboises et de cœurs roses",
   ),
   petrissage: client(petrissage, "Pâte lisse et brillante dans la cuve du pétrin, crochet en mouvement"),
-  farineSurPain: stock(
-    farineSurPain,
-    "Mains saupoudrant un nuage de farine au-dessus d'un pain rustique, sur fond noir",
-    "Tetiana Padurets",
-    "I5G_suhoqBQ",
-    "50% 40%",
-  ),
   baguetteFondNoir: stock(
     baguetteFondNoir,
     "Baguette dorée et farinée sur un plan de travail noir",
@@ -174,13 +165,6 @@ export const images = {
     "Sandwich baguette au jambon et au fromage en gros plan",
     "petradr",
     "eQqY_KQOqEE",
-  ),
-  champDeBleCouchant: stock(
-    champDeBleCouchant,
-    "Champ de blé doré au soleil couchant, sous un ciel orangé",
-    "heino eisner",
-    "y6dUxc66kAs",
-    "50% 62%",
   ),
 
   // Gâteaux sur mesure : en-tête

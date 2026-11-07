@@ -19,7 +19,7 @@ export function MobileActionBar() {
       aria-label="Accès rapide"
       className="right-scroll-bar-position on-dark fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[55] lg:hidden"
     >
-      <div className="mx-auto flex max-w-md gap-1 rounded-full bg-blue-deep/92 p-1.5 text-ivory shadow-[var(--shadow-float)] ring-1 ring-ivory/10 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-md gap-1 rounded-full bg-blue-deep/[0.96] p-1.5 text-ivory shadow-[var(--shadow-float)] ring-1 ring-ivory/10">
         <a href={mapsDirectionsUrl} target="_blank" rel="noopener noreferrer" className={cn(item, "active:bg-ivory/10")}>
           <Navigation className="size-4" aria-hidden="true" />
           Itinéraire

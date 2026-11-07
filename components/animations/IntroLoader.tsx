@@ -12,11 +12,13 @@ const FAILSAFE_MS = 8000;
 
 /**
  * Exécuté avant le premier affichage :
- * - intro-done + no-intro : l'intro a déjà été jouée pendant cette visite ;
+ * - intro-done + no-intro : pas d'intro, parce qu'elle a déjà été jouée pendant cette visite
+ *   ou parce que la visite commence sur une autre page que l'accueil (arrivée depuis un moteur
+ *   de recherche ou une carte : l'adresse et les horaires s'affichent tout de suite) ;
  * - anim : active les états initiaux des animations (voir globals.css), pour éviter tout clignotement.
  * no-intro reste distincte d'intro-done, qui est aussi posée à la fin de l'intro.
  */
-export const introGuardScript = `(function(){var d=document.documentElement,c=d.classList;function s(){c.add("intro-done");c.add("no-intro")}try{if(sessionStorage.getItem("${STORAGE_KEY}"))s()}catch(e){s()}if(matchMedia("(prefers-reduced-motion: no-preference)").matches)c.add("anim");setTimeout(function(){if(!d.hasAttribute("data-hydrated")){s();c.remove("anim")}},${FAILSAFE_MS})})()`;
+export const introGuardScript = `(function(){var d=document.documentElement,c=d.classList;function s(){c.add("intro-done");c.add("no-intro")}try{if(sessionStorage.getItem("${STORAGE_KEY}"))s();else if(location.pathname!=="/"){s();sessionStorage.setItem("${STORAGE_KEY}","1")}}catch(e){s()}if(matchMedia("(prefers-reduced-motion: no-preference)").matches)c.add("anim");setTimeout(function(){if(!d.hasAttribute("data-hydrated")){s();c.remove("anim")}},${FAILSAFE_MS})})()`;
 
 const DOTS = ["bg-framboise", "bg-citron", "bg-pistache", "bg-ivory"];
 

@@ -2,18 +2,26 @@
 
 import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
 import { gsap, MQ, SplitText, useGSAP } from "@/lib/gsap";
-import { onStageReady } from "@/lib/stage";
+import { hasNavigated, onStageReady } from "@/lib/stage";
 import { cn } from "@/lib/utils";
 
 type RevealKind = "up" | "left" | "right" | "pill" | "circle";
 
-/** Appelle `cb` une seule fois, quand l'élément entre à l'écran et que la scène est visible. */
-function onceInView(el: Element, cb: () => void) {
+/**
+ * Appelle `cb` une seule fois, quand l'élément entre à l'écran et que la scène est visible.
+ * `atLanding` : l'élément était déjà visible à l'arrivée sur le site (première page, sans défiler).
+ */
+function onceInView(el: Element, cb: (atLanding: boolean) => void) {
+  let first = true;
   const io = new IntersectionObserver(
     ([entry]) => {
+      const initial = first;
+      first = false;
       if (!entry.isIntersecting) return;
       io.disconnect();
-      cb();
+      // Arrivée = première page, élément déjà à l'écran, dans les premières secondes de la visite
+      // (pas après un filtre ou une interaction).
+      cb(initial && !hasNavigated() && performance.now() < 6000);
     },
     { rootMargin: "0px 0px -8% 0px" },
   );
@@ -50,7 +58,15 @@ export function RevealImage({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => onceInView(ref.current!, () => ref.current?.setAttribute("data-in", "")), []);
+  useEffect(
+    () =>
+      onceInView(ref.current!, (atLanding) => {
+        // Visible dès l'arrivée : c'est souvent l'image principale (LCP), révélation plus courte.
+        if (atLanding) ref.current?.setAttribute("data-quick", "");
+        ref.current?.setAttribute("data-in", "");
+      }),
+    [],
+  );
 
   useGSAP(
     () => {

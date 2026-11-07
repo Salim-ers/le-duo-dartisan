@@ -15,17 +15,22 @@ export function ScrollProgress() {
 
   useEffect(() => {
     let frame = 0;
+    let y = 0;
+    let max = 0;
     const update = () => {
       frame = 0;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+      const p = max > 0 ? Math.min(1, y / max) : 0;
       if (ring.current) ring.current.style.strokeDashoffset = String(C * (1 - p));
-      setVisible(window.scrollY > window.innerHeight * 0.9);
+      setVisible(y > window.innerHeight * 0.9);
     };
+    // Lectures dans l'événement (styles à jour), écriture à l'image suivante :
+    // pas de recalcul forcé au milieu des animations.
     const onScroll = () => {
+      y = window.scrollY;
+      max = document.documentElement.scrollHeight - window.innerHeight;
       if (!frame) frame = requestAnimationFrame(update);
     };
-    update();
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {

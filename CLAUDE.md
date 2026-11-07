@@ -35,6 +35,18 @@ Site vitrine statique (Next.js 16 App Router, React 19, TypeScript strict, Tailw
 6. Toute animation passe par `gsap.matchMedia()` avec `MQ` (`lib/gsap.ts`) : rien ne bouge avec `prefers-reduced-motion`.
 7. Les animations d'entrée attendent `onStageReady` (`lib/stage.ts`) : fin de l'intro ou du rideau de transition.
 
+## Performance : règles issues de l'audit
+
+1. Pas de `filter: blur()` sur un élément animé ou très grand : les halos (`Glow`) sont des dégradés radiaux.
+2. Pas d'animation CSS infinie sur un élément caché : l'activer seulement quand il est visible (ex. points du rideau, `data-active`).
+3. Lenis tourne en tête du ticker GSAP (`gsap.ticker.add(tick, false, true)`) ; dans un écouteur de défilement, lire la position dans l'événement et écrire dans `requestAnimationFrame`.
+4. Motion uniquement dans les pages qui en ont besoin (catalogue, formulaire) : jamais dans la mise en page globale (en-tête, pied de page).
+5. Filtres d'URL : `window.history.replaceState` (Next le synchronise avec `useSearchParams`), pas `router.replace` qui interroge le serveur.
+6. Image principale d'une page : prop `preload` de `Photo` (= `loading="eager"` + `fetchPriority="high"`) ; `sizes` au plus près de la largeur affichée.
+7. Contraste : texte clair sur framboise → `bg-framboise-deep` (le framboise clair n'atteint que 3,5:1).
+8. Ne pas réactiver `experimental.inlineCss` : testé et écarté (page plus lourde, styles 4× plus coûteux au défilement).
+9. Toute optimisation se mesure avant/après sur le build de production (`next build && next start`) : Lighthouse mobile, trace Chrome du défilement à CPU ×4.
+
 ## Vérification visuelle
 
 Contrôler au minimum 320, 390, 768, 1024, 1440 et 2560 px, sans débordement horizontal, et le mode mouvement réduit.

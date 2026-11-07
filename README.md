@@ -91,7 +91,7 @@ Protection : champ pot de miel (`_gotcha`), validation Zod côté client, filtra
 
 - Next.js 16, React 19, TypeScript strict, Tailwind CSS 4.
 - GSAP + ScrollTrigger + SplitText : intro, séquences au défilement, révélation des titres.
-- Motion : menu mobile, modales, filtres, étapes du configurateur.
+- Motion : modales, filtres, étapes du configurateur (pages Nos créations et Gâteaux sur mesure uniquement ; le menu mobile est animé avec GSAP pour ne pas charger Motion partout).
 - Lenis : défilement doux sur souris/trackpad uniquement ; le tactile garde le défilement natif.
 - Radix Dialog (base de shadcn/ui) pour les fenêtres accessibles, React Hook Form + Zod, Lucide.
 - `next/image` : AVIF/WebP, tailles adaptées à chaque écran, flou de chargement, aucun décalage de mise en page.
@@ -100,7 +100,7 @@ Protection : champ pot de miel (`_gotcha`), validation Zod côté client, filtra
 
 **Direction artistique « La vitrine en couleurs »** : le bleu de la façade et la crème des menuiseries pour la base, la framboise, la pistache et le citron des vitrines pour les accents (jetons dans `styles/globals.css`). Tout est arrondi : en-tête et boutons en pastille, cartes de 28 à 56 px d’arrondi, sections bleues aux coins arrondis, arches. Motif signature : la photo du fraisier sertie dans le titre d’accueil, comme un gâteau dans une vitrine. Éléments décoratifs partagés (macaron, badge au texte tournant, halos de couleur) : `components/ui/Decor.tsx`. À éviter, car perçu comme « fait par une IA » : étiquettes en pastille au-dessus des titres, rubans de mots qui défilent, texte qui s’allume mot à mot, nuages d’étiquettes.
 
-**Animations** : le motion design fait partie de l’identité du site. L’intro se joue une fois par visite et peut être passée (bouton, clic ou Échap). Entre les pages, une vague bleue aux bords arrondis. `prefers-reduced-motion` est respecté partout.
+**Animations** : le motion design fait partie de l’identité du site. L’intro se joue une fois par visite, uniquement quand la visite commence par l’accueil (un visiteur qui arrive directement sur « Nous trouver » depuis un moteur de recherche voit l’adresse tout de suite), et peut être passée (bouton, clic ou Échap). Entre les pages, une vague bleue aux bords arrondis. `prefers-reduced-motion` est respecté partout.
 
 Trois règles évitent les bugs (plantage au rechargement, molette bloquée dans les fenêtres, clignotements) :
 1. **Pas de `pin` ScrollTrigger** : les séquences utilisent `position: sticky` et un `scrub`.
@@ -108,6 +108,15 @@ Trois règles évitent les bugs (plantage au rechargement, molette bloquée dans
 3. **États de départ en CSS** : la classe `.anim`, posée avant le premier affichage, masque ce qui doit apparaître (`data-fade`, `data-split`, `data-pop`, `data-reveal`). Si le JavaScript ne démarre pas, elle est retirée au bout de 8 secondes.
 4. **Pas de `stagger` dans un `fromTo` de timeline** quand l’état de départ compte : GSAP ne l’applique alors qu’au premier élément. Un `fromTo` par élément, ou un `gsap.set` préalable.
 5. **Mouvements continus en propriétés CSS individuelles** (`translate`, `rotate`, `scale`) : GSAP garde la main sur `transform` sans conflit.
+
+**Performance** (audit du 6 novembre 2026, mesures avant/après dans le rapport de livraison) :
+1. **Pas de `filter: blur()` animé** : les halos de couleur sont des dégradés radiaux (même rendu, sans flou recalculé à chaque image).
+2. **Pas d’animation CSS infinie sur un élément caché** : les points du rideau de transition ne rebondissent que pendant la transition.
+3. **Lenis en tête du ticker GSAP** et position de défilement lue dans l’événement `scroll` : plus de recalcul de styles forcé à chaque image.
+4. **Motion hors de la mise en page globale** : chargé seulement par le catalogue et le formulaire (−45 Ko compressés sur les autres pages).
+5. **Filtres du catalogue via `history.replaceState`** : instantanés, sans aller-retour serveur.
+6. **Image principale** : `preload` de `Photo` = chargement immédiat et prioritaire ; les photos visibles dès l’arrivée sont révélées plus vite (le navigateur ne les compte comme affichées qu’en fin d’animation).
+7. **CSS en fichier séparé** : l’option expérimentale `inlineCss` a été testée et écartée (page 50 Ko plus lourde, premier affichage plus lent, styles 4 fois plus coûteux au défilement).
 
 **Cookies** : aucun cookie de mesure ni publicitaire, donc pas de bandeau. La carte Google ne se charge qu’au clic du visiteur.
 

@@ -6,6 +6,12 @@ type Listener = () => void;
 
 let introDone = false;
 let covering = false;
+/** Vrai dès la première navigation interne : on n'est plus sur la page d'arrivée. */
+let navigated = false;
+
+export function hasNavigated() {
+  return navigated;
+}
 const listeners = new Set<Listener>();
 
 function introAlreadySeen() {
@@ -32,6 +38,7 @@ export function setIntroDone() {
 
 export function setCovering(value: boolean) {
   covering = value;
+  if (value) navigated = true;
   if (!value) flush();
 }
 
